@@ -39,11 +39,17 @@ services:
     image: provectuslabs/kafka-ui:v0.7.2
     ports:
       - "8080:8080"
+    restart: always
+    volumes:
+      # 將主機當前目錄下的 config.yaml 掛載到容器內
+      # 這樣你在 UI 上改動後，內容會寫回這個檔案
+      - ./kafka-ui/data/:/etc/kafkaui/
     environment:
       # --- Demo 核心設定 ---
       # 1. 啟用動態設定：允許你在網頁 UI 上直接 "Add Cluster"
-      - DYNAMIC_CONFIG_ENABLED=true
+      DYNAMIC_CONFIG_ENABLED: true
+      DYNAMIC_CONFIG_PATH: /etc/kafkaui/dynamic_config.yaml
       # 2. 關閉登入驗證：Demo 不需要輸入帳密
-      - AUTH_TYPE=DISABLED
+      AUTH_TYPE: DISABLED
       # 3. 設定日誌級別：減少雜訊
-      - LOGGING_LEVEL_ROOT=INFO
+      LOGGING_LEVEL_ROOT: INFO
