@@ -31,10 +31,13 @@ public class SingleConsumerTest {
             topics.add(TEST_TOPIC);
             kafkaConsumer.subscribe(topics);
             while (true) {
+                // 沒資料時最多等待時間 , 現在是設定 1 秒
+                // 如果有資料就立刻拉取
                 val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                     log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
                 }
+
             }
         }
     }
