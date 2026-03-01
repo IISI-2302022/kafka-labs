@@ -6,4 +6,5 @@ public final class Constants {
     }
 
     public static final String TEST_TOPIC = "test1";
+    public static final String VALUE_PREFIX = "iisi";
 }

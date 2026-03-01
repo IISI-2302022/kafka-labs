@@ -16,7 +16,7 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 @Slf4j
 public class CommitOffsetConsumerTest {
 
-    // 自動 consumer offset commit
+    // consumer auto commit offset
     @Test
     public void autoCommit() {
         val properties = new Properties();
@@ -43,7 +43,7 @@ public class CommitOffsetConsumerTest {
         }
     }
 
-    // 手動 consumer offset commit : 同步 commit
+    // consumer manually commit offset sync
     @Test
     public void manuallySyncCommit() {
         val properties = new Properties();
@@ -78,7 +78,7 @@ public class CommitOffsetConsumerTest {
         }
     }
 
-    // 手動 consumer offset commit : 非同步 commit
+    // consumer manually commit offset async
     @Test
     public void manuallyAsyncCommit() {
         val properties = new Properties();

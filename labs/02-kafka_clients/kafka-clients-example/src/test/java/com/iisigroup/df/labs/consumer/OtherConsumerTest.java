@@ -17,7 +17,7 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 public class OtherConsumerTest {
 
 
-    // 針對 topic 之某 partition 消費
+    // 針對 topic + partition 組合進行消費
     @Test
     public void consumePartition() {
         val properties = new Properties();
@@ -56,8 +56,8 @@ public class OtherConsumerTest {
             topics.add(TEST_TOPIC);
             kafkaConsumer.subscribe(topics);
 
-            // 先抓到 consumer 被分派到哪些 topic + partition
-            // 缺點: rebalance 後不會再做 seek 了
+            // 等待 consumer 分配 partition 完成
+            // 問題: 若分區重分配 , 這邊不會再將新分配的分區做 offset 指定
             Set<TopicPartition> assignment = new HashSet<>();
             while (assignment.isEmpty()) {
                 kafkaConsumer.poll(Duration.ofSeconds(1));
@@ -90,20 +90,21 @@ public class OtherConsumerTest {
 
             val topics = new ArrayList<String>();
             topics.add(TEST_TOPIC);
-
             kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
                 @Override
                 public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                    // 在 partition 被收回前可以做一些事，例如提交 offset
+                    // 原本消費之分區被收回 , 這些分區會分配給別的 consumer
                     log.info("Partitions revoked: {}", partitions);
                 }
 
                 @Override
                 public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                    // 分區重分配時所分配到的分區
                     log.info("Partitions assigned: {}", partitions);
                     for (TopicPartition tp : partitions) {
-                        // 缺點: 每次 rebalance 都會從 offset 20 開始消費 , 可能會重複消費資料
-                        // 只是範例而已 , 實務上需要額外判斷 offset 是否已處理過
+                        // 有可能分配到新的分區 , 也有可能是原本就有的分區
+                        // 所以原本有的分區消費 offset 也會被重置為 20 開始消費
+                        // 如果不是想要這種結果的 , 就必須做判斷 (將已做過的 offset 儲存)
                         kafkaConsumer.seek(tp, 20);
                     }
                 }
@@ -139,7 +140,7 @@ public class OtherConsumerTest {
                 assignment = kafkaConsumer.assignment();
             }
 
-            // 一天前
+            // 一天前起算的 offset
             val value = System.currentTimeMillis() - 86400000;
             val timestampToSearch = new HashMap<TopicPartition, Long>();
             for (TopicPartition topicPartition : assignment) {
