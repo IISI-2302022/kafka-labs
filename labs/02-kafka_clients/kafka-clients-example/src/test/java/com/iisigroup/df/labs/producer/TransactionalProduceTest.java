@@ -24,10 +24,10 @@ public class TransactionalProduceTest {
         val properties = new Properties();
 
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
+
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -74,10 +74,10 @@ public class TransactionalProduceTest {
         val properties = new Properties();
 
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
+
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
