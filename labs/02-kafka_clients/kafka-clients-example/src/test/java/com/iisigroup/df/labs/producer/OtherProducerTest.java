@@ -198,6 +198,9 @@ public class OtherProducerTest {
 
         // 方案 A（推薦）：冪等性 + max.in.flight ≤ 5，Broker 端會自動排序
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        // todo 最大尚未 ack 的 request 數量
+        //  每個 request 最多只包含一個 topic + partition batch 資料
+        //  如果開啟冪等性 , broker 會使用 batch 的 sequence number 進行排序 (只接受最多 5 個 batch , 超過不保證順序)
         properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5);
 
         // 方案 B（替代）：關閉冪等性，限制 in-flight 為 1，以犧牲吞吐量換取順序保證
