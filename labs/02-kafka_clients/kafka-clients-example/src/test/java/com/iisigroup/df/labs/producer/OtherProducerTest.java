@@ -80,10 +80,10 @@ public class OtherProducerTest {
         val properties = new Properties();
 
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
+
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -108,10 +108,10 @@ public class OtherProducerTest {
         val properties = new Properties();
 
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
+
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -119,10 +119,10 @@ public class OtherProducerTest {
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-
         properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5);
 
-//        properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
+        //        properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, false);
+        //        properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
