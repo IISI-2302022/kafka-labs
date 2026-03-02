@@ -9,3 +9,5 @@ export THIS_SHELL_DIR="$(dirname "${THIS_SHELL_PATH}")"
 #docker-compose -f "${THIS_SHELL_DIR}/docker-compose.yml" down
 
 docker rm -f kafka kafka-ui-demo
+
+docker network rm -f kafka-lab0

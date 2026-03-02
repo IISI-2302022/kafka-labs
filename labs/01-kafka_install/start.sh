@@ -20,7 +20,7 @@ export MSYS_NO_PATHCONV=1
 export THIS_SHELL_PATH="$(readlink -f "$0")"
 export THIS_SHELL_DIR="$(dirname "${THIS_SHELL_PATH}")"
 
-docker network create --driver bridge kafka-net
+docker network create --driver bridge kafka-lab0
 
 docker run -d \
   --name kafka \
