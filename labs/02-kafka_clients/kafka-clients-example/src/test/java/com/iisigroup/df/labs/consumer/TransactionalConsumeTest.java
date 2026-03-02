@@ -17,7 +17,6 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 @Slf4j
 public class TransactionalConsumeTest {
 
-    // 搭配 producer 交易成功資料或非交易資料進行讀取
     @Test
     public void consumeForTransaction() {
         val properties = new Properties();

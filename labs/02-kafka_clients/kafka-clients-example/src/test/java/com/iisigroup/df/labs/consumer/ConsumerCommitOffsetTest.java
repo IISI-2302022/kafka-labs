@@ -16,7 +16,6 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 @Slf4j
 public class ConsumerCommitOffsetTest {
 
-    // consumer auto commit offset
     @Test
     public void autoCommit() {
         val properties = new Properties();
@@ -25,9 +24,7 @@ public class ConsumerCommitOffsetTest {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_auto_commit");
 
-        // 開啟自動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        // 背景執行續每秒 commit 一次
         properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 1000);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -43,7 +40,6 @@ public class ConsumerCommitOffsetTest {
         }
     }
 
-    // consumer manually commit offset sync
     @Test
     public void manuallySyncCommitForBatch() {
         val properties = new Properties();
@@ -52,7 +48,6 @@ public class ConsumerCommitOffsetTest {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync_batch");
 
-        // 開啟手動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -64,7 +59,6 @@ public class ConsumerCommitOffsetTest {
                 for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                     log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
                 }
-                // 整批做完做 commit , 這裡是同步 commit , commit 成功與否會影響後續程式執行
                 kafkaConsumer.commitSync();
             }
         }
@@ -79,7 +73,6 @@ public class ConsumerCommitOffsetTest {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync_record");
 
-        // 開啟手動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -101,7 +94,6 @@ public class ConsumerCommitOffsetTest {
         }
     }
 
-    // consumer manually commit offset async
     @Test
     public void manuallyAsyncCommitForBatch() {
         val properties = new Properties();
@@ -110,7 +102,6 @@ public class ConsumerCommitOffsetTest {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async_batch");
 
-        // 開啟手動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -122,7 +113,6 @@ public class ConsumerCommitOffsetTest {
                 for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                     log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
                 }
-                // 整批做完做 commit , 這裡是非同步 commit , commit 成功與否不會影響後續程式執行
                 kafkaConsumer.commitAsync();
             }
         }
@@ -137,7 +127,6 @@ public class ConsumerCommitOffsetTest {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async_record");
 
-        // 開啟手動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {

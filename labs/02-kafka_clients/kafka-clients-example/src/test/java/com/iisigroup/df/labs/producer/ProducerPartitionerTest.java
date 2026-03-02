@@ -104,7 +104,7 @@ public class ProducerPartitionerTest {
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        // 不管如何都丟到 partition - 0
+
         properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, ZeroOnlyPartitioner.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {

@@ -18,7 +18,6 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 @Slf4j
 public class ConsumerGroupTest {
 
-    // consumer group partition 分配機制: Range + CooperativeStickyAssignor
     @Test
     public void defaultPartitionAssignmentStrategyConsumer0() {
         val properties = new Properties();
@@ -39,8 +38,6 @@ public class ConsumerGroupTest {
         }
     }
 
-
-    // consumer group partition 分配機制: Range + CooperativeStickyAssignor
     @Test
     public void defaultPartitionAssignmentStrategyConsumer1() {
         val properties = new Properties();
@@ -61,7 +58,6 @@ public class ConsumerGroupTest {
         }
     }
 
-    // consumer group partition 分配機制: Range + CooperativeStickyAssignor
     @Test
     public void defaultPartitionAssignmentStrategyConsumer2() {
         val properties = new Properties();
@@ -82,7 +78,6 @@ public class ConsumerGroupTest {
         }
     }
 
-    // consumer group partition 分配機制: RoundRobinAssignor
     @Test
     public void rBPartitionAssignmentStrategyConsumer0() {
         val properties = new Properties();
@@ -106,7 +101,6 @@ public class ConsumerGroupTest {
         }
     }
 
-    // consumer group partition 分配機制: RoundRobinAssignor
     @Test
     public void rBPartitionAssignmentStrategyConsumer1() {
         val properties = new Properties();
@@ -130,7 +124,6 @@ public class ConsumerGroupTest {
         }
     }
 
-    // consumer group partition 分配機制: RoundRobinAssignor
     @Test
     public void rBPartitionAssignmentStrategyConsumer2() {
         val properties = new Properties();

@@ -22,21 +22,20 @@ public class TransactionalProduceTest {
     @Test
     public void transactionSuccess() {
         val properties = new Properties();
-        // 16K
+
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
 
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
-        // 64M
+
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
-        // acks -1 or all
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
-        // 不無止盡 retry
+
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
-        // 開啟冪等性
+
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-        // transaction id
+
         properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_0");
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
@@ -73,22 +72,21 @@ public class TransactionalProduceTest {
     @Test
     public void transactionRollback() {
         val properties = new Properties();
-        // 16K
+
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
 
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
-        // 64M
+
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
-        // acks -1 or all
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
-        // 不無止盡 retry
+
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
-        // 開啟冪等性
+
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-        // transaction id
-        properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_0");
+
+        properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_1");
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
