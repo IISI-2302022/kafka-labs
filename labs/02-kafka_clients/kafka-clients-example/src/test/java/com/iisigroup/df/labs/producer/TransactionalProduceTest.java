@@ -1,5 +1,6 @@
 package com.iisigroup.df.labs.producer;
 
+import com.iisigroup.df.labs.consumer.TransactionalConsumeTest;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -16,42 +17,86 @@ import java.util.concurrent.Future;
 import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 import static com.iisigroup.df.labs.constant.Constants.VALUE_PREFIX;
 
+/**
+ * Kafka Transactional Producer 示範。
+ * <p>
+ * Kafka 交易（Transaction）提供跨 Partition 的原子性寫入保證：
+ * 一個交易內的所有訊息要嘛全部被消費者可見，要嘛全部不可見。
+ * </p>
+ *
+ * <h3>交易使用前提</h3>
+ * <ul>
+ *     <li>必須設定 {@code transactional.id}（唯一識別此 Producer 實例）</li>
+ *     <li>冪等性（idempotence）會被自動開啟</li>
+ *     <li>{@code acks} 會被自動設為 {@code all}</li>
+ * </ul>
+ *
+ * <h3>交易 API 流程</h3>
+ * <pre>{@code
+ * producer.initTransactions();       // 1. 初始化交易（僅需呼叫一次）
+ * producer.beginTransaction();       // 2. 開始交易
+ * producer.send(...);                // 3. 發送訊息（可多次）
+ * producer.commitTransaction();      // 4a. 提交交易（成功）
+ * producer.abortTransaction();       // 4b. 中止交易（失敗時回滾）
+ * }</pre>
+ *
+ * <p>
+ * 搭配 Consumer 端設定 {@code isolation.level=read_committed}，
+ * 即可確保消費者只讀取到已提交的交易訊息。
+ * </p>
+ *
+ * @see TransactionalConsumeTest
+ */
 @Slf4j
 public class TransactionalProduceTest {
 
+    /**
+     * 交易成功提交（Transaction Commit）。
+     * <p>
+     * 所有訊息在 {@code commitTransaction()} 後才會對 {@code read_committed} 的 Consumer 可見。
+     * 若在 {@code beginTransaction()} 與 {@code commitTransaction()} 之間未發生例外，
+     * 交易會正常提交。
+     * </p>
+     */
     @Test
     public void transactionSuccess() {
         val properties = new Properties();
 
+        // ---- 吞吐量 & 壓縮 ----
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
-
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
-
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
+        // ---- 可靠性 ----
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
-
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
+        // ---- 冪等性（交易自動開啟，此處明確設定）----
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
+        // ---- 交易 ID：用於唯一識別此 Producer 的交易範圍 ----
         properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_0");
 
+        // ---- 基本連線與序列化 ----
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
+            // 初始化交易狀態（向 Transaction Coordinator 註冊）
             kafkaProducer.initTransactions();
             try {
+                // 開始一個新的交易
                 kafkaProducer.beginTransaction();
 
+                // 收集所有 send() 回傳的 Future，稍後可驗證每筆訊息的 metadata
                 val futureList = new ArrayList<Future<RecordMetadata>>();
                 for (int i = 0; i < 5; i++) {
                     futureList.add(kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i)));
                 }
 
+                // 逐一取得發送結果（此時訊息已寫入 Broker，但交易尚未提交）
                 for (Future<RecordMetadata> recordMetadataFuture : futureList) {
                     val recordMetadata = recordMetadataFuture.get();
                     val offset = recordMetadata.offset();
@@ -61,31 +106,41 @@ public class TransactionalProduceTest {
                     log.info("offset: {}, partition: {}, timestamp: {}, topic: {}", offset, partition, timestamp, topic);
                 }
 
+                // 提交交易：所有訊息對 read_committed 的 Consumer 變為可見
                 kafkaProducer.commitTransaction();
             } catch (Exception e) {
+                // 發生任何例外時中止交易：已寫入的訊息會被標記為 aborted，Consumer 不會消費到
                 kafkaProducer.abortTransaction();
                 throw new RuntimeException(e);
             }
         }
     }
 
+    /**
+     * 交易回滾（Transaction Rollback）。
+     * <p>
+     * 在 {@code commitTransaction()} 前故意拋出例外，觸發 {@code abortTransaction()}。
+     * 已經發送但尚未提交的訊息會被標記為中止（aborted），
+     * 使用 {@code read_committed} 隔離級別的 Consumer 不會消費到這些訊息。
+     * </p>
+     * <p>
+     * <b>注意：</b>使用 {@code read_uncommitted}（預設）的 Consumer 仍然可以讀到被中止的訊息。
+     * </p>
+     */
     @Test
     public void transactionRollback() {
         val properties = new Properties();
 
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
-
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
-
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
-
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
-
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
+        // 使用不同的 transactional.id，避免與其他交易 Producer 衝突
         properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_1");
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
@@ -111,12 +166,14 @@ public class TransactionalProduceTest {
                     log.info("offset: {}, partition: {}, timestamp: {}, topic: {}", offset, partition, timestamp, topic);
                 }
 
+                // 模擬業務邏輯錯誤，強制觸發回滾
                 if (true) {
                     throw new RuntimeException("test rollback");
                 }
 
                 kafkaProducer.commitTransaction();
             } catch (Exception e) {
+                // 中止交易：所有未提交的訊息對 read_committed Consumer 不可見
                 kafkaProducer.abortTransaction();
                 throw new RuntimeException(e);
             }
