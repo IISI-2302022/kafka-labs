@@ -7,6 +7,5 @@ export THIS_SHELL_DIR="$(dirname "${THIS_SHELL_PATH}")"
 chmod u+x "${THIS_SHELL_DIR}/stop.sh"
 "${THIS_SHELL_DIR}/stop.sh"
 
-rm -rf "${THIS_SHELL_DIR}/kafka/data"
-#chmod u+x "${THIS_SHELL_DIR}/restart.sh"
-#"${THIS_SHELL_DIR}/restart.sh"
+rm -rf "${THIS_SHELL_DIR}/kafka/data/"*
+rm -rf "${THIS_SHELL_DIR}/kafka-ui/data/"*
