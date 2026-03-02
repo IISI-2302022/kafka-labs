@@ -14,7 +14,7 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 
 
 @Slf4j
-public class CommitOffsetConsumerTest {
+public class ConsumerCommitOffsetTest {
 
     // consumer auto commit offset
     @Test
@@ -45,12 +45,12 @@ public class CommitOffsetConsumerTest {
 
     // consumer manually commit offset sync
     @Test
-    public void manuallySyncCommit() {
+    public void manuallySyncCommitForBatch() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync_batch");
 
         // 開啟手動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
@@ -63,14 +63,6 @@ public class CommitOffsetConsumerTest {
                 val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                     log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
-                    // 針對每一筆資料做完做 commit
-                    // 可多筆做完做 commit
-//                    val partition = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
-//                    val offsetMeta = new OffsetAndMetadata(consumerRecord.offset() + 1);
-//
-//                    val commitMap = Collections.singletonMap(partition, offsetMeta);
-//
-//                    kafkaConsumer.commitSync(commitMap);
                 }
                 // 整批做完做 commit , 這裡是同步 commit , commit 成功與否會影響後續程式執行
                 kafkaConsumer.commitSync();
@@ -78,14 +70,14 @@ public class CommitOffsetConsumerTest {
         }
     }
 
-    // consumer manually commit offset async
+
     @Test
-    public void manuallyAsyncCommit() {
+    public void manuallySyncCommitForRecord() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync_record");
 
         // 開啟手動 commit
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
@@ -98,19 +90,75 @@ public class CommitOffsetConsumerTest {
                 val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                     log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
-                    // 針對每一筆資料做完做 commit
-                    // 可多筆做完做 commit
-//                    val partition = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
-//                    val offsetMeta = new OffsetAndMetadata(consumerRecord.offset() + 1);
-//                    val commitMap = Collections.singletonMap(partition, offsetMeta);
-//                    kafkaConsumer.commitAsync(commitMap, (metadataMap, e) -> {
-//                        if (e == null) {
-//                        } else {
-//                        }
-//                    });
+
+                    val partition = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
+                    val offsetMeta = new OffsetAndMetadata(consumerRecord.offset() + 1);
+                    val commitMap = Collections.singletonMap(partition, offsetMeta);
+
+                    kafkaConsumer.commitSync(commitMap);
+                }
+            }
+        }
+    }
+
+    // consumer manually commit offset async
+    @Test
+    public void manuallyAsyncCommitForBatch() {
+        val properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async_batch");
+
+        // 開啟手動 commit
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+
+        try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
+            val topics = new ArrayList<String>();
+            topics.add(TEST_TOPIC);
+            kafkaConsumer.subscribe(topics);
+            while (true) {
+                val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
                 }
                 // 整批做完做 commit , 這裡是非同步 commit , commit 成功與否不會影響後續程式執行
                 kafkaConsumer.commitAsync();
+            }
+        }
+    }
+
+
+    @Test
+    public void manuallyAsyncCommitForRecord() {
+        val properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async_record");
+
+        // 開啟手動 commit
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+
+        try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
+            val topics = new ArrayList<String>();
+            topics.add(TEST_TOPIC);
+            kafkaConsumer.subscribe(topics);
+            while (true) {
+                val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                    val partition = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
+                    val offsetMeta = new OffsetAndMetadata(consumerRecord.offset() + 1);
+                    val commitMap = Collections.singletonMap(partition, offsetMeta);
+                    kafkaConsumer.commitAsync(commitMap, (metadataMap, e) -> {
+                        if (e == null) {
+                            log.info("commit success for offset: {}, partition: {}", consumerRecord.offset(), consumerRecord.partition());
+                        } else {
+                            log.error("commit failed for offset: {}, partition: {}", consumerRecord.offset(), consumerRecord.partition(), e);
+                        }
+                    });
+                }
             }
         }
     }

@@ -15,7 +15,7 @@ import static com.iisigroup.df.labs.constant.Constants.VALUE_PREFIX;
 
 
 @Slf4j
-public class OtherProduceTest {
+public class OtherProducerTest {
 
     @Test
     public void increaseThroughput() {

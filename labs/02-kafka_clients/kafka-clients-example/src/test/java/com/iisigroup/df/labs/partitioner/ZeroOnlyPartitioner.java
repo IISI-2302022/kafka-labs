@@ -5,10 +5,9 @@ import org.apache.kafka.common.Cluster;
 
 import java.util.Map;
 
-public class TestPartitioner implements Partitioner {
+public class ZeroOnlyPartitioner implements Partitioner {
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-        // todo 提供一個常用方案
         return 0;
     }
 

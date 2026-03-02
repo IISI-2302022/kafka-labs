@@ -6,7 +6,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.RoundRobinAssignor;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ public class ConsumerGroupTest {
 
     // consumer group partition 分配機制: Range + CooperativeStickyAssignor
     @Test
-    public void defaultConsumeStrategyConsumer0() {
+    public void defaultPartitionAssignmentStrategyConsumer0() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -43,7 +42,7 @@ public class ConsumerGroupTest {
 
     // consumer group partition 分配機制: Range + CooperativeStickyAssignor
     @Test
-    public void defaultConsumeStrategyConsumer1() {
+    public void defaultPartitionAssignmentStrategyConsumer1() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -64,7 +63,7 @@ public class ConsumerGroupTest {
 
     // consumer group partition 分配機制: Range + CooperativeStickyAssignor
     @Test
-    public void defaultConsumeStrategyConsumer2() {
+    public void defaultPartitionAssignmentStrategyConsumer2() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -85,7 +84,7 @@ public class ConsumerGroupTest {
 
     // consumer group partition 分配機制: RoundRobinAssignor
     @Test
-    public void RBConsumeStrategyConsumer0() {
+    public void rBPartitionAssignmentStrategyConsumer0() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -109,7 +108,7 @@ public class ConsumerGroupTest {
 
     // consumer group partition 分配機制: RoundRobinAssignor
     @Test
-    public void RBConsumeStrategyConsumer1() {
+    public void rBPartitionAssignmentStrategyConsumer1() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -133,7 +132,7 @@ public class ConsumerGroupTest {
 
     // consumer group partition 分配機制: RoundRobinAssignor
     @Test
-    public void RBConsumeStrategyConsumer2() {
+    public void rBPartitionAssignmentStrategyConsumer2() {
         val properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());

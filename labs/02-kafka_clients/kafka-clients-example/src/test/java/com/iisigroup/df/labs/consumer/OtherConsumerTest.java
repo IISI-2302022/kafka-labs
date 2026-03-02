@@ -165,30 +165,5 @@ public class OtherConsumerTest {
         }
     }
 
-    // 搭配 producer 交易成功資料或非交易資料進行讀取
-    @Test
-    public void consumeReadCommitForTransaction() {
-        val properties = new Properties();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_read_committed");
-
-        properties.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
-
-        try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
-            val topics = new ArrayList<String>();
-            topics.add(TEST_TOPIC);
-            kafkaConsumer.subscribe(topics);
-
-            while (true) {
-                val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
-                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
-                }
-            }
-        }
-    }
-
 
 }
