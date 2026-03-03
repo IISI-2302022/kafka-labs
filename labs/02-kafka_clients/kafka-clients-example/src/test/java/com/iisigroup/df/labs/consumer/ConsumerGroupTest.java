@@ -24,13 +24,23 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
  *
  * <h3>分區分配策略</h3>
  * <ul>
- *     <li><b>RangeAssignor（預設）</b>— 以 Topic 為單位，將 Partition 以連續範圍分配給各 Consumer。
+ *     <li><b>RangeAssignor</b>— 以 Topic 為單位，將 Partition 以連續範圍分配給各 Consumer。
  *         例如 7 個 Partition、3 個 Consumer → Consumer0 得到 [0,1,2]，Consumer1 得到 [3,4]，Consumer2 得到 [5,6]</li>
  *     <li><b>RoundRobinAssignor</b>— 將所有 Topic 的 Partition 混合後，以輪詢方式逐一分配給各 Consumer，
  *         分配結果較為均勻</li>
  *     <li><b>StickyAssignor</b>— 在均勻分配的基礎上，盡量維持 Rebalance 前的分配結果，減少 Partition 搬遷</li>
- *     <li><b>CooperativeStickyAssignor</b>— 支援增量式（Incremental）Rebalance，不需一次撤回所有 Partition</li>
+ *     <li><b>CooperativeStickyAssignor</b>— 結合 Sticky 的「盡量不搬家」特性，
+ *         並改用漸進式 Rebalance：傳統策略在 Rebalance 時會先把所有 Consumer 的 Partition 全部收回再重新分配，
+ *         導致短暫的全面停擺；CooperativeSticky 則只搬動「需要換人」的 Partition，
+ *         其餘 Consumer 可以繼續消費不中斷，大幅降低 Rebalance 對服務的衝擊</li>
  * </ul>
+ *
+ * <h3>預設策略（Kafka 3.0+）</h3>
+ * <p>
+ * 自 Kafka 3.0 起（KIP-726），預設的 {@code partition.assignment.strategy} 包含
+ * <b>RangeAssignor</b> 與 <b>CooperativeStickyAssignor</b> 兩種策略，
+ * 而非僅有 RangeAssignor。Consumer 會依序嘗試，優先使用群組中所有成員皆支援的策略。
+ * </p>
  *
  * <h3>實驗方式</h3>
  * <p>
@@ -45,11 +55,12 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
 public class ConsumerGroupTest {
 
     /**
-     * 預設分區策略（RangeAssignor）— Consumer 0。
+     * 預設分區策略（RangeAssignor + CooperativeStickyAssignor）— Consumer 0。
      * <p>
-     * 群組 ID 為 {@code "test"}，使用預設的 RangeAssignor。
+     * 群組 ID 為 {@code "test"}，使用預設的分區分配策略。
+     * 自 Kafka 3.0 起，預設策略同時包含 RangeAssignor 與 CooperativeStickyAssignor。
      * 啟動多個相同 group.id 的 Consumer 後，Kafka 會觸發 Rebalance，
-     * 以 Range 策略分配 Partition。
+     * 以群組成員皆支援的策略分配 Partition。
      * </p>
      */
     @Test
@@ -73,7 +84,7 @@ public class ConsumerGroupTest {
     }
 
     /**
-     * 預設分區策略（RangeAssignor）— Consumer 1。
+     * 預設分區策略（RangeAssignor + CooperativeStickyAssignor）— Consumer 1。
      * <p>
      * 與 Consumer0 使用相同的 group.id {@code "test"}，
      * 加入群組後會觸發 Rebalance，重新分配 Partition。
@@ -100,7 +111,7 @@ public class ConsumerGroupTest {
     }
 
     /**
-     * 預設分區策略（RangeAssignor）— Consumer 2。
+     * 預設分區策略（RangeAssignor + CooperativeStickyAssignor）— Consumer 2。
      * <p>
      * 與 Consumer0、Consumer1 使用相同的 group.id {@code "test"}。
      * <b>注意：</b>若 Consumer 數量超過 Partition 數量，多出的 Consumer 將處於閒置（idle）狀態。
