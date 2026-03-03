@@ -20,9 +20,18 @@ export MSYS_NO_PATHCONV=1
 export THIS_SHELL_PATH="$(readlink -f "$0")"
 export THIS_SHELL_DIR="$(dirname "${THIS_SHELL_PATH}")"
 
-docker network create --driver bridge kafka-lab0
+if type podman &> /dev/null; then
+  export container_engine=podman
+elif type docker &> /dev/null; then
+  export container_engine=docker
+else
+  echo "Error: No container engine found. Please install Podman or Docker." >&2
+  exit 1
+fi
 
-docker run -d \
+"${container_engine}" network create --driver bridge kafka-lab0
+
+"${container_engine}" run -d \
   --name kafka \
   --network kafka-net \
   -p 29092:29092 \
@@ -45,7 +54,7 @@ docker run -d \
   -e KAFKA_LOG_DIRS=/var/lib/kafka/data \
   confluentinc/cp-kafka:7.9.1
 
-docker run -d \
+"${container_engine}" run -d \
   --name kafka-ui-demo \
   --network kafka-net \
   -p 8080:8080 \
@@ -57,4 +66,4 @@ docker run -d \
   -e LOGGING_LEVEL_ROOT=INFO \
   provectuslabs/kafka-ui:v0.7.2
 
-#docker-compose -f "${THIS_SHELL_DIR}/docker-compose.yml" up -d --build
+#"${container_engine}" compose -f "${THIS_SHELL_DIR}/docker-compose.yml" up -d --build
