@@ -43,9 +43,11 @@ public class SimpleProduceTest {
     public void asyncProduce() {
         val properties = new Properties();
 
-        // ---- 基本連線與序列化設定 ----
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         // try-with-resources 確保 Producer 正常關閉，flush 殘餘訊息
@@ -75,8 +77,11 @@ public class SimpleProduceTest {
     public void asyncProduceWithCallback() {
         val properties = new Properties();
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -116,8 +121,11 @@ public class SimpleProduceTest {
     public void syncProduce() throws ExecutionException, InterruptedException {
         val properties = new Properties();
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {

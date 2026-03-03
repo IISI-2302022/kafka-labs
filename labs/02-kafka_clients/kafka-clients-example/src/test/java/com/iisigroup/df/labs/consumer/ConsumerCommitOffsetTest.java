@@ -59,14 +59,20 @@ public class ConsumerCommitOffsetTest {
     @Test
     public void autoCommit() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_auto_commit");
 
-        // 開啟自動提交（預設即為 true）
+        // 開啟自動提交 Offset（預設就是 true）：Consumer 會在背景自動幫你提交消費進度
+        // 好處是簡單不用管，壞處是可能還沒處理完訊息就提交了，重啟後這些訊息就「消失」了
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        // 自動提交間隔：每 1000ms 提交一次（預設為 5000ms）
+        // 自動提交的時間間隔：每 1000 毫秒（1 秒）提交一次消費進度（預設 5000 毫秒）
+        // 間隔越短 → 重複消費的機率越低，但對 Broker 的負擔越大
         properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 1000);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -95,12 +101,17 @@ public class ConsumerCommitOffsetTest {
     @Test
     public void manuallySyncCommitForBatch() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync_batch");
 
-        // 關閉自動提交，改為手動控制
+        // 關閉自動提交 Offset，改為由程式碼手動控制什麼時候提交消費進度
+        // 這樣可以確保「處理完訊息之後才提交」，避免還沒處理完就被自動提交
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -137,11 +148,16 @@ public class ConsumerCommitOffsetTest {
     @Test
     public void manuallySyncCommitForRecord() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_sync_record");
 
+        // 關閉自動提交 Offset，改為由程式碼手動控制什麼時候提交消費進度
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -179,11 +195,16 @@ public class ConsumerCommitOffsetTest {
     @Test
     public void manuallyAsyncCommitForBatch() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async_batch");
 
+        // 關閉自動提交 Offset，改為由程式碼手動控制什麼時候提交消費進度
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -216,11 +237,16 @@ public class ConsumerCommitOffsetTest {
     @Test
     public void manuallyAsyncCommitForRecord() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_manual_commit_async_record");
 
+        // 關閉自動提交 Offset，改為由程式碼手動控制什麼時候提交消費進度
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {

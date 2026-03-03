@@ -54,12 +54,18 @@ public class TransactionalConsumeTest {
     @Test
     public void consumeForTransaction() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_read_committed");
 
-        // 設定隔離級別為 read_committed：只讀取已提交的交易訊息
+        // 設定隔離級別為 read_committed：只讀取 Producer 已經 commitTransaction() 的訊息
+        // 被 abortTransaction() 回滾的訊息會被自動跳過，不會被這個 Consumer 讀到
+        // 預設值是 read_uncommitted（什麼訊息都讀，包含還沒提交或已回滾的）
         properties.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {

@@ -52,8 +52,11 @@ public class ProducerPartitionerTest {
     public void defaultPartitionerProduceWithPartition() {
         val properties = new Properties();
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -91,8 +94,11 @@ public class ProducerPartitionerTest {
     public void defaultPartitionerProduceWithSameKey() {
         val properties = new Properties();
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -125,8 +131,11 @@ public class ProducerPartitionerTest {
     public void defaultPartitionerProduceWithDifferentKey() {
         val properties = new Properties();
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -165,11 +174,14 @@ public class ProducerPartitionerTest {
     public void customPartitionerProduce() {
         val properties = new Properties();
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        // 指定自訂 Partitioner — 所有訊息一律寫入 Partition 0
+        // 指定自訂的分區策略，覆蓋預設的 DefaultPartitioner，此處讓所有訊息一律寫入 Partition 0
         properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, ZeroOnlyPartitioner.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {

@@ -50,10 +50,13 @@ public class SingleConsumerTest {
     @Test
     public void singleConsumer() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition，每個 Partition 只會被群組內的一個 Consumer 消費
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_single");
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {

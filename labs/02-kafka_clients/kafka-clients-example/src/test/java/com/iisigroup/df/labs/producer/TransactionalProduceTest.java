@@ -63,24 +63,36 @@ public class TransactionalProduceTest {
         val properties = new Properties();
 
         // ---- 吞吐量 & 壓縮 ----
+        // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
+        // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         // ---- 可靠性 ----
+        // acks=all 表示要等所有副本（ISR）都確認收到訊息才算成功，最安全但延遲較高
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        // 發送失敗時自動重試 3 次，避免因暫時性網路問題就丟訊息
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
-        // ---- 冪等性（交易自動開啟，此處明確設定）----
+        // ---- 冪等性（交易模式會自動開啟冪等性，此處明確設定以便閱讀）----
+        // 開啟冪等性：Broker 會依據 PID + Sequence Number 自動去重
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
-        // ---- 交易 ID：用於唯一識別此 Producer 的交易範圍 ----
+        // ---- 交易 ID ----
+        // 每個交易 Producer 都必須設定唯一的 transactional.id，用來讓 Broker 識別這個 Producer 的交易範圍
+        // 如果 Producer 重啟但使用相同的 transactional.id，Broker 會自動回滾該 ID 上一次未完成的交易
         properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_0");
 
         // ---- 基本連線與序列化 ----
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -131,20 +143,30 @@ public class TransactionalProduceTest {
     public void transactionRollback() {
         val properties = new Properties();
 
+        // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
+        // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
+        // acks=all 表示要等所有副本（ISR）都確認收到訊息才算成功，最安全但延遲較高
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        // 發送失敗時自動重試 3 次，避免因暫時性網路問題就丟訊息
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
+        // 開啟冪等性：Broker 會依據 PID + Sequence Number 自動去重
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
-        // 使用不同的 transactional.id，避免與其他交易 Producer 衝突
+        // 使用不同的 transactional.id，每個交易 Producer 實例都要有自己唯一的 ID，避免跟其他 Producer 衝突
         properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transaction_id_1");
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {

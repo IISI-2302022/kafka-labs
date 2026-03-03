@@ -50,9 +50,13 @@ public class OtherConsumerTest {
     @Test
     public void consumePartition() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：雖然用了 assign() 不走 Consumer Group 機制，但 Kafka 仍需要 group.id 來管理 Offset
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_partition");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             // 手動指派要消費的 Partition
@@ -93,9 +97,13 @@ public class OtherConsumerTest {
     @Test
     public void consumeFromSpecificOffset() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_from_specific_offset");
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -142,9 +150,13 @@ public class OtherConsumerTest {
     @Test
     public void consumeFromSpecificOffsetUseConsumerGroupRebalance() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_from_specific_offset_rebalance");
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -196,9 +208,13 @@ public class OtherConsumerTest {
     @Test
     public void consumeFromSpecificDateTime() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_from_specific_datetime");
 
 

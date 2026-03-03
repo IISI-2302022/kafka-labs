@@ -66,9 +66,13 @@ public class ConsumerGroupTest {
     @Test
     public void defaultPartitionAssignmentStrategyConsumer0() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition，每個 Partition 只會被群組內的一個 Consumer 消費
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             val topics = new ArrayList<String>();
@@ -93,9 +97,13 @@ public class ConsumerGroupTest {
     @Test
     public void defaultPartitionAssignmentStrategyConsumer1() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：與 Consumer0 使用相同的 group.id，加入群組後會觸發 Rebalance 重新分配 Partition
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             val topics = new ArrayList<String>();
@@ -120,9 +128,13 @@ public class ConsumerGroupTest {
     @Test
     public void defaultPartitionAssignmentStrategyConsumer2() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：若 Consumer 數量超過 Partition 數量，多出的 Consumer 會閒置（idle）
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             val topics = new ArrayList<String>();
@@ -149,12 +161,16 @@ public class ConsumerGroupTest {
     @Test
     public void rBPartitionAssignmentStrategyConsumer0() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：使用不同的 group.id 以便與預設策略的群組區分
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
 
-        // 指定 RoundRobin 分區分配策略
+        // 指定分區分配策略為 RoundRobin：將所有 Partition 以輪詢方式分配給群組內的 Consumer，分配結果比 Range 更均勻
         properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName());
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -179,11 +195,16 @@ public class ConsumerGroupTest {
     @Test
     public void rBPartitionAssignmentStrategyConsumer1() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：與 Consumer0 相同群組，使用 RoundRobin 策略
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
 
+        // 指定分區分配策略為 RoundRobin：將所有 Partition 以輪詢方式均勻分配
         properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName());
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
@@ -208,11 +229,16 @@ public class ConsumerGroupTest {
     @Test
     public void rBPartitionAssignmentStrategyConsumer2() {
         val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：與 Consumer0、Consumer1 相同群組，使用 RoundRobin 策略
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
 
+        // 指定分區分配策略為 RoundRobin：將所有 Partition 以輪詢方式均勻分配
         properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName());
 
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {

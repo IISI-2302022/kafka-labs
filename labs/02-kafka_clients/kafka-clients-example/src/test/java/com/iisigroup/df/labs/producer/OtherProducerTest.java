@@ -46,17 +46,22 @@ public class OtherProducerTest {
     public void increaseThroughput() {
         val properties = new Properties();
 
-        // ---- 吞吐量調校參數 ----
-        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);          // batch 大小（bytes），預設 16384
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);              // 等待湊滿 batch 的最大時間（ms）
+        // 每個 batch 最大 16 KB，Producer 會把多筆訊息打包成一個 batch 再一起發送，減少網路來回次數
+        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出，避免訊息延遲太久
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
-        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);    // 緩衝區總大小（bytes），預設 32 MB，此處設為 64 MB
+        // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
+        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
 
-        properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");   // 壓縮類型：none / gzip / snappy / lz4 / zstd
+        // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量（可選：none / gzip / snappy / lz4 / zstd）
+        properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
-        // ---- 基本連線與序列化設定 ----
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -94,21 +99,30 @@ public class OtherProducerTest {
     public void improveDataReliability() {
         val properties = new Properties();
 
-        // ---- 吞吐量調校參數（同上）----
+        // ---- 吞吐量調校參數 ----
+        // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
+        // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
 
+        // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
         // ---- 可靠性參數 ----
-        properties.put(ProducerConfig.ACKS_CONFIG, "all");   // 等待所有 ISR 副本確認
-        properties.put(ProducerConfig.RETRIES_CONFIG, 3);    // 失敗重試次數
+        // acks=all 表示要等所有副本（ISR）都確認收到訊息才算成功，最安全但延遲較高
+        properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        // 發送失敗時自動重試 3 次，避免因暫時性網路問題就丟訊息
+        properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
         // ---- 基本連線與序列化設定 ----
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -141,22 +155,31 @@ public class OtherProducerTest {
     public void produceDeduplicatedMessages() {
         val properties = new Properties();
 
+        // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
+        // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
 
+        // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
+        // acks=all 表示要等所有副本（ISR）都確認收到訊息才算成功，最安全但延遲較高
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
 
+        // 發送失敗時自動重試 3 次，避免因暫時性網路問題就丟訊息
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
-        // 開啟冪等性：Broker 會依據 PID + Sequence Number 自動去重
+        // 開啟冪等性：Broker 會依據 PID + Sequence Number 自動去重，即使 Producer 因重試而重複送出訊息，Broker 也只會保留一份
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
@@ -185,30 +208,40 @@ public class OtherProducerTest {
     public void produceOrderedMessages() {
         val properties = new Properties();
 
+        // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
 
+        // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
 
+        // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
 
+        // acks=all 表示要等所有副本（ISR）都確認收到訊息才算成功，最安全但延遲較高
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
 
+        // 發送失敗時自動重試 3 次，避免因暫時性網路問題就丟訊息
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
-        // 方案 A（推薦）：冪等性 + max.in.flight ≤ 5，Broker 端會自動排序
+        // 方案 A（推薦）：開啟冪等性，Broker 端會自動排序
+        // 開啟冪等性：Broker 會依據 PID + Sequence Number 自動去重，即使重試也不會產生重複訊息
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-        // todo 最大尚未 ack 的 request 數量
-        //  每個 request 最多只包含一個 topic + partition batch 資料
-        //  如果開啟冪等性 , broker 會使用 batch 的 sequence number 進行排序 (只接受最多 5 個 batch , 超過不保證順序)
+        // 最多允許 5 個尚未收到 Broker 回應（ack）的請求同時在路上
+        // 每個請求只包含一個 topic + partition 的 batch 資料
+        // 開啟冪等性時，Broker 會用 batch 的 sequence number 自動排序（最多接受 5 個，超過就不保證順序）
         properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5);
 
-        // 方案 B（替代）：關閉冪等性，限制 in-flight 為 1，以犧牲吞吐量換取順序保證
+        // 方案 B（替代）：關閉冪等性，限制同時只能有 1 個請求在路上，用犧牲吞吐量的方式換取順序保證
         //        properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, false);
         //        properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
 
+        // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 訊息的 value 要用什麼方式轉成 byte[]，這裡用字串序列化器
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
