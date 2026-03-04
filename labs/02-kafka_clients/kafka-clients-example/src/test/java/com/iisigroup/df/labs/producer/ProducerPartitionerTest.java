@@ -38,7 +38,9 @@ import static com.iisigroup.df.labs.constant.Constants.VALUE_PREFIX;
 @Slf4j
 public class ProducerPartitionerTest {
 
-    /** 用於示範「相同 Key」場景的固定 Key 值 */
+    /**
+     * 用於示範「相同 Key」場景的固定 Key 值
+     */
     public static final String STATIC_KEY = "staticKey";
 
     /**
@@ -103,7 +105,9 @@ public class ProducerPartitionerTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                // 相同 Key = "staticKey" → 同一 Partition
+                // 未指定 partition、有指定 key → DefaultPartitioner 對 key 的 byte[] 做 murmur2 hash，
+                // 公式：Utils.toPositive(Utils.murmur2(keyBytes)) % numPartitions
+                // 相同 Key = "staticKey" → 同樣的 hash 值 → 同一 Partition
                 kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, STATIC_KEY, VALUE_PREFIX + i), (metadata, exception) -> {
                     if (exception != null) {
                         log.error("send message error", exception);
@@ -141,8 +145,8 @@ public class ProducerPartitionerTest {
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
                 val key = STATIC_KEY + i;
-                // 印出 key 與其 hashCode，方便驗證 partition 分配邏輯
-                log.info("key: {} , hash: {}", key, key.hashCode());
+                // 未指定 partition、有指定 key → murmur2(key 的 byte[]) % numPartitions
+                // 不同 key 產生不同 hash 值，因此可能分散到不同 Partition
                 kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, key, VALUE_PREFIX + i), (metadata, exception) -> {
                     if (exception != null) {
                         log.error("send message error", exception);
