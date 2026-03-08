@@ -15,6 +15,6 @@ else
   exit 1
 fi
 
-"${container_engine}" rm -f kafka kafka-rest-proxy
+"${container_engine}" rm -f kafka-rest-proxy
 
 #"${container_engine}" compose -f "${THIS_SHELL_DIR}/docker-compose.yml" down
