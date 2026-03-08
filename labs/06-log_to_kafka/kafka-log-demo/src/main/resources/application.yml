@@ -1,0 +1,8 @@
+---
+spring:
+  config:
+    import: classpath:application-common.yml
+---
+spring:
+  application:
+    name: kafka-log-demo
