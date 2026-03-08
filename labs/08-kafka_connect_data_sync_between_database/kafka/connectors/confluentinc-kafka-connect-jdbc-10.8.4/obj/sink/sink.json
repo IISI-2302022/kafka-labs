@@ -1,0 +1,33 @@
+{
+  "name": "sink",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "connection.url": "jdbc:postgresql://postgresql:5432/kafka_sink",
+    "connection.user": "admin",
+    "connection.password": "admin",
+    "insert.mode": "upsert",
+    "pk.mode": "record_key",
+    "pk.fields": "id",
+    "delete.enabled": true,
+    "auto.create": true,
+    "auto.evolve": true,
+    "topic.refresh.interval.ms": "10000",
+    "topics.regex": "source_id_timestamp-.+",
+    "table.name.format": "${topic}",
+    "transforms": "drop,InsertField,cast,rename",
+    "transforms.drop.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.drop.exclude": "email",
+    "transforms.InsertField.type": "org.apache.kafka.connect.transforms.InsertField$Value",
+    "transforms.InsertField.static.field": "test_column",
+    "transforms.InsertField.static.value": "2",
+    "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast$Value",
+    "transforms.cast.spec": "test_column:int32",
+    "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.rename.renames": "name:engName,password:credentials,test_column:test_c",
+    "errors.tolerance": "all",
+    "errors.deadletterqueue.topic.name": "dlq_file_sink_02",
+    "errors.deadletterqueue.topic.replication.factor": 1,
+    "errors.deadletterqueue.context.headers.enable": true,
+    "errors.log.enable": true
+  }
+}
