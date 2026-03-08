@@ -29,11 +29,11 @@ else
   exit 1
 fi
 
-"${container_engine}" network create --driver bridge kafka-lab0
+"${container_engine}" network create --driver bridge kafka-labs
 
 "${container_engine}" run -d \
   --name kafka \
-  --network kafka-net \
+  --network kafka-labs \
   -p 29092:29092 \
   --restart always \
   -v "${THIS_SHELL_DIR}/kafka/data:/var/lib/kafka/data" \
@@ -56,7 +56,7 @@ fi
 
 "${container_engine}" run -d \
   --name kafka-ui-demo \
-  --network kafka-net \
+  --network kafka-labs \
   -p 8080:8080 \
   --restart always \
   -v "${THIS_SHELL_DIR}/kafka-ui/data/:/etc/kafkaui/" \
