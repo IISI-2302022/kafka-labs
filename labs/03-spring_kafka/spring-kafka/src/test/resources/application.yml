@@ -102,6 +102,9 @@ spring:
           json:
             trusted:
               packages: '*'
+            value:
+              default:
+                type: java.lang.String
     template:
       default-topic: cache-kill
     bootstrap-servers: ${spring_kafka_bootstrap_servers:localhost:9092}
