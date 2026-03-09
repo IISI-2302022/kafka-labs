@@ -61,7 +61,7 @@
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <!-- if neverBlock is set to true, the async appender discards messages when its internal queue is full -->
         <neverBlock>true</neverBlock>
-        <queueSize>512</queueSize>
+<!--        <queueSize>512</queueSize>-->
         <appender-ref ref="kafkaAppender"/>
     </appender>
 

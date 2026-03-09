@@ -17,6 +17,6 @@ fi
 
 "${container_engine}" rm -f kafka kafka-ui-demo
 
-"${container_engine}" network rm -f kafka-lab0
+"${container_engine}" network rm -f kafka-labs
 
 #"${container_engine}" compose -f "${THIS_SHELL_DIR}/docker-compose.yml" down
