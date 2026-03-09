@@ -1,0 +1,109 @@
+---
+spring:
+  config:
+    import: classpath:application-common.yml
+---
+spring:
+  application:
+    name: spring-kafka
+  kafka:
+    admin:
+      # 啟動時是否自動創建 topic
+      auto-create: ${spring_kafka_admin_auto_create:false}
+      fail-fast: ${spring_kafka_admin_fail_fast:true}
+      # 是否修改 topic 設定
+      modify-topic-configs: ${spring_kafka_admin_modify_topic_configs:true}
+    producer:
+      # leader 接收資料存入硬碟 且 isr follows 皆進行同步資料並存入硬碟
+      acks: all
+      # 發送端暫存 partition 資料達此值 , 方可進行將資料發送
+      batch-size: 16KB
+      # 發送端資料暫存記憶體總大小
+      buffer-memory: 64MB
+      # 發送端資料壓縮演算法
+      compression-type: zstd
+      # 發送資料 key 的序列化器
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 發送資料 value 的序列化器
+      value-serializer: ${producer_value_serializer:org.springframework.kafka.support.serializer.JsonSerializer}
+      # 預設無限次數 , 應設定合理 retry 次數
+      retries: 3
+      # 若需開啟交易 , 則要設定交易 id 前綴
+      #      transaction-id-prefix: "${spring.application.name}-"
+      properties:
+        # 發送資料但尚未回應之請求最大數量
+        max:
+          in:
+            flight:
+              requests:
+                per:
+                  connection: 5
+        # 開啟冪等性 , 資料不重複發送 , 可搭配 max.in.flight.requests.per.connection <=5 讓資料有序發送
+        enable:
+          idempotence: true
+        # 發送端暫存 partition 資料未達 batch-size 值 , 但從第一筆開始等待發送時間已超過此毫秒數 , 依然進行發送
+        linger:
+          ms: 50
+    listener:
+      # 消費者 auto commit offset 需關閉
+      # spring kafka 幫忙手動 commit 之模式
+      # 其中也有提供開發者手動 commit offset 之模式 => MANUAL & MANUAL_IMMEDIATE
+      ack-mode: ${spring_kafka_listener_ack_mode:BATCH}
+      # 需開啟 MANUAL or MANUAL_IMMEDIATE 模式為前提
+      # consumer offset 是否非同步 commit
+      # 建議是同步 , 除非效能太差
+      async-acks: false
+      # 一筆一筆處理資料 , 如要一次處理多筆 , 可改成 batch
+      type: single
+      # 應用啟動即開始消費
+      auto-startup: true
+      # 在指定消費者組中創建多少個消費者執行續並行消費
+      # 若微服務架構 , 採叢集部屬應用
+      # 若單體架構 , 可調高設定
+      concurrency: 1
+      ack-count: ${spring_kafka_listener_ack_count:3}
+      ack-time: ${spring_kafka_listener_ack_time:50ms}
+      idle-between-polls: 1s
+    consumer:
+      # k8s 上建議使用 pod name
+      group-id: ${spring_kafka_consumer_group_id:${spring.application.name}-${random.uuid}}
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      # 避免 kafka 資料格式問題 , 使用這個反序列化器 , 將失敗的轉成 null , 在 listener 中進行處理
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      # 自動 commit 不建議使用 , 容易造成漏消費
+      enable-auto-commit: ${spring_kafka_consumer_enable_auto_commit:false}
+      auto-commit-interval: 5s
+      auto-offset-reset: latest
+      heartbeat-interval: 3s
+      fetch-min-size: 1B
+      fetch-max-wait: 500ms
+      max-poll-records: 500
+      # 交易隔離層級
+      isolation-level: read_committed
+      properties:
+        fetch:
+          max:
+            bytes: 52428800
+        max:
+          poll:
+            interval:
+              ms: 300000
+        session:
+          timeout:
+            ms: 45000
+        spring:
+          deserializer:
+            key:
+              delegate:
+                class: org.apache.kafka.common.serialization.StringDeserializer
+            value:
+              delegate:
+                class: ${consumer_value_deserializer:org.springframework.kafka.support.serializer.JsonDeserializer}
+          json:
+            trusted:
+              packages: '*'
+    template:
+      default-topic: cache-kill
+    bootstrap-servers: ${spring_kafka_bootstrap_servers:localhost:9092}
+server:
+  port: 7777

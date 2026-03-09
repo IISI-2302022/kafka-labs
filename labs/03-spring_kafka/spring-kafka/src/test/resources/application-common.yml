@@ -1,0 +1,9 @@
+---
+proj:
+  profile: ${proj_profile:prod}
+spring:
+  config:
+    import:
+      - classpath:log/application-log.yml
+  profiles:
+    active: ${proj.profile}
