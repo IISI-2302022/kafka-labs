@@ -40,8 +40,6 @@ public class ZeroOnlyPartitioner implements Partitioner {
      */
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        log.info("Routing message to partition 0: topic={}, key={}, value={}", topic, key, value);
         return 0;
     }
 
