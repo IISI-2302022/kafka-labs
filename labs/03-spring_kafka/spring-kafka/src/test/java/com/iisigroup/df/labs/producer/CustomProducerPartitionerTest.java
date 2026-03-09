@@ -1,12 +1,12 @@
 package com.iisigroup.df.labs.producer;
 
 import com.iisigroup.df.labs.config.MySpringBootTest;
+import com.iisigroup.df.labs.partitioner.ZeroOnlyPartitioner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -18,36 +18,21 @@ import java.util.concurrent.TimeoutException;
 
 import static com.iisigroup.df.labs.consumer.ConsumerAutoCommitTest.TEST_TOPIC;
 
-
 @Slf4j
-
 @MySpringBootTest
-@Import(KafkaTxService.class)
-public class ProducerTest {
-
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+public class CustomProducerPartitionerTest {
 
     @DynamicPropertySource
     public static void setup(DynamicPropertyRegistry registry) {
         registry.add("spring_kafka_bootstrap_servers", () -> "localhost:29092");
+        registry.add("spring.kafka.producer.properties.partitioner.class", ZeroOnlyPartitioner.class::getName);
     }
 
-    @Test
-    public void sendSync() throws ExecutionException, InterruptedException, TimeoutException {
-        for (int i = 0; i < 5; i++) {
-            val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, "haha" + i));
-            // 同步發送 , 建議採 timeout 方式 , 時間請自行斟酌
-            // 發送失敗會拋例外 , 如要處理 , 採用 try cache 方式
-            val sendResult = future.get(5, TimeUnit.SECONDS);
-            // kafka 回傳之結果資訊
-            val recordMetadata = sendResult.getRecordMetadata();
-            log.info("topic: {}, partition: {}, offset: {}, timestamp: {}", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset(), recordMetadata.timestamp());
-        }
-    }
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Test
-    public void sendAsync() throws InterruptedException {
+    public void sendSync() throws InterruptedException {
         val limit = 5;
         val countDownLatch = new CountDownLatch(limit);
 
@@ -68,8 +53,5 @@ public class ProducerTest {
         }
 
         countDownLatch.await(10, TimeUnit.SECONDS);
-
     }
-
-
 }
