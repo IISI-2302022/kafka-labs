@@ -3,7 +3,6 @@ package com.iisigroup.df.labs.consumer;
 import com.iisigroup.df.labs.config.MySpringBootTest;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -29,8 +28,6 @@ public class ConsumerSpecificOffsetTest implements ConsumerSeekAware {
 
     @DynamicPropertySource
     public static void setup(DynamicPropertyRegistry registry) {
-        // 自動提交 offset
-        registry.add("spring_kafka_consumer_enable_auto_commit", () -> true);
         registry.add("spring_kafka_bootstrap_servers", () -> "localhost:29092");
     }
 

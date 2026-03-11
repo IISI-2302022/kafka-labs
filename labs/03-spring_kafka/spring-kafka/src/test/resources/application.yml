@@ -73,7 +73,7 @@ spring:
       # 自動 commit 不建議使用 , 容易造成漏消費
       enable-auto-commit: ${spring_kafka_consumer_enable_auto_commit:false}
       auto-commit-interval: 5s
-      auto-offset-reset: latest
+      auto-offset-reset: ${spring_kafka_consumer_auto_offset_reset:latest}
       heartbeat-interval: 3s
       fetch-min-size: 1B
       fetch-max-wait: 500ms

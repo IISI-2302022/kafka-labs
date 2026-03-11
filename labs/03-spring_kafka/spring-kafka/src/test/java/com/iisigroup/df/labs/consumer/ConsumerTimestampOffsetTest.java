@@ -30,8 +30,6 @@ public class ConsumerTimestampOffsetTest implements ConsumerSeekAware {
 
     @DynamicPropertySource
     public static void setup(DynamicPropertyRegistry registry) {
-        // 自動提交 offset
-        registry.add("spring_kafka_consumer_enable_auto_commit", () -> true);
         registry.add("spring_kafka_bootstrap_servers", () -> "localhost:29092");
     }
 
