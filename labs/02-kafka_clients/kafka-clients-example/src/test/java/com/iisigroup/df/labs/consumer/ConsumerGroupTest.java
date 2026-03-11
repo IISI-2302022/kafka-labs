@@ -2,10 +2,7 @@ package com.iisigroup.df.labs.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.RoundRobinAssignor;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 
@@ -253,5 +250,87 @@ public class ConsumerGroupTest {
             }
         }
     }
+
+    @Test
+    public void stickyPartitionAssignmentStrategyConsumer0() {
+        val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：使用不同的 group.id 以便與預設策略的群組區分
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
+
+        properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
+
+        try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
+            val topics = new ArrayList<String>();
+            topics.add(TEST_TOPIC);
+            kafkaConsumer.subscribe(topics);
+            while (true) {
+                val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                }
+            }
+        }
+    }
+
+    @Test
+    public void stickyPartitionAssignmentStrategyConsumer1() {
+        val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：與 Consumer0 相同群組，使用 RoundRobin 策略
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
+
+        properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
+
+        try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
+            val topics = new ArrayList<String>();
+            topics.add(TEST_TOPIC);
+            kafkaConsumer.subscribe(topics);
+            while (true) {
+                val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                }
+            }
+        }
+    }
+
+    @Test
+    public void stickyPartitionAssignmentStrategyConsumer2() {
+        val properties = new Properties();
+        // Kafka 叢集的連線位址（host:port），Consumer 會透過這個位址找到整個叢集
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        // 訊息的 key 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // 消費者群組 ID：與 Consumer0、Consumer1 相同群組，使用 RoundRobin 策略
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
+
+        properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
+
+        try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
+            val topics = new ArrayList<String>();
+            topics.add(TEST_TOPIC);
+            kafkaConsumer.subscribe(topics);
+            while (true) {
+                val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                }
+            }
+        }
+    }
+
 
 }
