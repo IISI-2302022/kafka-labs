@@ -52,6 +52,7 @@ fi
   -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 \
   -e KAFKA_AUTO_CREATE_TOPICS_ENABLE="true" \
   -e KAFKA_LOG_DIRS=/var/lib/kafka/data \
+  -e KAFKA_DELETE_TOPIC_ENABLE="true" \
   confluentinc/cp-kafka:7.9.1
 
 "${container_engine}" run -d \
