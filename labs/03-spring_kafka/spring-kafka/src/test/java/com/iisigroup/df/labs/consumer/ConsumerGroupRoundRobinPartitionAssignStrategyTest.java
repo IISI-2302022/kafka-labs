@@ -31,13 +31,4 @@ public class ConsumerGroupRoundRobinPartitionAssignStrategyTest {
         System.out.println("Received message: " + record);
     }
 
-    @KafkaListener(topics = TEST_TOPIC, groupId = "ConsumerGroupRoundRobinPartitionAssignStrategyTest")
-    public void listen1(ConsumerRecord<String, String> record) {
-        System.out.println("Received message: " + record);
-    }
-
-    @KafkaListener(topics = TEST_TOPIC, groupId = "ConsumerGroupRoundRobinPartitionAssignStrategyTest")
-    public void listen2(ConsumerRecord<String, String> record) {
-        System.out.println("Received message: " + record);
-    }
 }
