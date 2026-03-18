@@ -1,0 +1,278 @@
+{
+  "info": {
+    "_postman_id": "9e9ff98b-e1ed-4ffe-bcf0-ec7dc87a93d9",
+    "name": "kafka-labs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "3498730"
+  },
+  "item": [
+    {
+      "name": "05-async_mail_sender",
+      "item": []
+    },
+    {
+      "name": "06-distributed_system_local_cache_killer",
+      "item": [
+        {
+          "name": "notify",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"kind\": \"oeai\",\r\n    \"name\": \"sysParam\",\r\n    \"self\": false,\r\n    \"spec\": {\r\n       \"safsa\":\"safsaf\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:7777/cache/kill",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "7777",
+              "path": [
+                "cache",
+                "kill"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07-kafka_rest_proxy_for_producer",
+      "item": [
+        {
+          "name": "produce_with_partition",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.kafka.json.v2+json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"records\": [\r\n        {\r\n            \"value\": {\r\n                \"cacheKillerId\": {\r\n                    \"kind\": \"oeai\",\r\n                    \"name\": \"sysParam\"\r\n                },\r\n                \"spec\": {\r\n                    \"id\": 2\r\n                }\r\n            },\r\n            \"partition\": 0\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/topics/cache-kill",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "topics",
+                "cache-kill"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "produce_with_key",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.kafka.json.v2+json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"records\": [\r\n        {\r\n            \"value\": {\r\n                \"cacheKillerId\": {\r\n                    \"kind\": \"oeai\",\r\n                    \"name\": \"sysParam\"\r\n                },\r\n                \"spec\": {\r\n                    \"id\": 2\r\n                }\r\n            },\r\n            \"key\": \"my_key\"\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/topics/cache-kill",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "topics",
+                "cache-kill"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "produce_with_string_value",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.kafka.binary.v2+json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"records\": [\r\n        {\r\n            \"value\": \"a2Fma2Eg6Kqy56iL\"\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/topics/cache-kill",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "topics",
+                "cache-kill"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "produce_with_json_value",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.kafka.json.v2+json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"records\": [\r\n        {\r\n            \"value\": {\r\n                \"cacheKillerId\": {\r\n                    \"kind\": \"oeai\",\r\n                    \"name\": \"sysParam\"\r\n                },\r\n                \"spec\": {\r\n                    \"id\": 2\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/topics/cache-kill",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "topics",
+                "cache-kill"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "produce_with_multi_record",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.kafka.json.v2+json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"records\": [\r\n        {\r\n            \"value\": {\r\n                \"cacheKillerId\": {\r\n                    \"kind\": \"oeai\",\r\n                    \"name\": \"sysParam\"\r\n                },\r\n                \"spec\": {\r\n                    \"id\": 1\r\n                }\r\n            }\r\n        },\r\n        {\r\n            \"value\": {\r\n                \"cacheKillerId\": {\r\n                    \"kind\": \"oeai\",\r\n                    \"name\": \"sysParam\"\r\n                },\r\n                \"spec\": {\r\n                    \"id\": 2\r\n                }\r\n            }\r\n        },\r\n        {\r\n            \"value\": {\r\n                \"cacheKillerId\": {\r\n                    \"kind\": \"oeai\",\r\n                    \"name\": \"sysParam\"\r\n                },\r\n                \"spec\": {\r\n                    \"id\": 3\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/topics/cache-kill",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "topics",
+                "cache-kill"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
