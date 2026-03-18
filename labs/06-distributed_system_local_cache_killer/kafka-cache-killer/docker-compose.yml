@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  kafka-cache-killer:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      additional_contexts:
+        parent: ../
+    container_name: kafka-cache-killer
+    labels:
+      logger: vector
+    environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:17777
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+      OTEL_METRICS_EXPORTER: "none"
+      OTEL_SERVICE_NAME: "kafka-cache-killer"
+      spring_kafka_bootstrap_servers: kafka:9092
+    ports:
+      - "17777:17777"
+    #      - "7777:7777"
+    restart: always
+    networks:
+      - mcp
+networks:
+  mcp:
+    external: true
