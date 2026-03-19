@@ -1,4 +1,4 @@
-package com.redhat.kafkacachekiller.design_pattern;
+package com.iisigroup.df.design_pattern;
 
 public interface Identifiable<Id> {
 

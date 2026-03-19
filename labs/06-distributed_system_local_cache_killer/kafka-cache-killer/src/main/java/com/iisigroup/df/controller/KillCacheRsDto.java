@@ -1,6 +1,6 @@
-package com.redhat.kafkacachekiller.controller;
+package com.iisigroup.df.controller;
 
-import com.redhat.kafkacachekiller.status.Status;
+import com.iisigroup.df.status.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

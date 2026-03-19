@@ -1,7 +1,7 @@
-package com.redhat.kafkacachekiller.kafka.consumer;
+package com.iisigroup.df.kafka.consumer;
 
-import com.redhat.kafkacachekiller.cache.CacheKillerInfo;
-import com.redhat.kafkacachekiller.cache.CacheKillerRegistry;
+import com.iisigroup.df.cache.CacheKillerInfo;
+import com.iisigroup.df.cache.CacheKillerRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

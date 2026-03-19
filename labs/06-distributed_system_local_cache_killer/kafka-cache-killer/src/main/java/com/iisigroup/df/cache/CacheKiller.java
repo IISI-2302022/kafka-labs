@@ -1,6 +1,6 @@
-package com.redhat.kafkacachekiller.cache;
+package com.iisigroup.df.cache;
 
-import com.redhat.kafkacachekiller.design_pattern.Identifiable;
+import com.iisigroup.df.design_pattern.Identifiable;
 
 import java.util.Map;
 

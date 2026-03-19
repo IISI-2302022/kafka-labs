@@ -1,6 +1,6 @@
-package com.redhat.kafkacachekiller.cache;
+package com.iisigroup.df.cache;
 
-import com.redhat.kafkacachekiller.design_pattern.IdentifiableGetter;
+import com.iisigroup.df.design_pattern.IdentifiableGetter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Component;

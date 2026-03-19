@@ -1,9 +1,9 @@
-package com.redhat.kafkacachekiller.controller;
+package com.iisigroup.df.controller;
 
-import com.redhat.kafkacachekiller.cache.CacheKillerInfo;
-import com.redhat.kafkacachekiller.cache.CacheKillerRegistry;
-import com.redhat.kafkacachekiller.config.prop.KillCacheProperties;
-import com.redhat.kafkacachekiller.status.Status;
+import com.iisigroup.df.cache.CacheKillerInfo;
+import com.iisigroup.df.cache.CacheKillerRegistry;
+import com.iisigroup.df.config.prop.KillCacheProperties;
+import com.iisigroup.df.status.Status;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,6 @@ public class KillCacheController {
     private final KafkaTemplate<String, CacheKillerInfo> kafkaTemplate;
 
 
-    //    @Transactional
     @PostMapping(
             value = "${cache.kill.endpoint:/cache/kill}",
             consumes = MediaType.APPLICATION_JSON_VALUE,

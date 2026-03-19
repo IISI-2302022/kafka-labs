@@ -1,7 +1,7 @@
-package com.redhat.kafkacachekiller.cache.example;
+package com.iisigroup.df.cache.example;
 
-import com.redhat.kafkacachekiller.cache.CacheKiller;
-import com.redhat.kafkacachekiller.cache.CacheKillerId;
+import com.iisigroup.df.cache.CacheKiller;
+import com.iisigroup.df.cache.CacheKillerId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 // todo 範例清 cache 實做,參考後可刪除
 @Component
 @Slf4j
-public class ExampleCacheKiller implements CacheKiller {
+public class Example1CacheKiller implements CacheKiller {
 
     @Override
     public void kill(Map<String, Object> spec) {
@@ -19,6 +19,6 @@ public class ExampleCacheKiller implements CacheKiller {
 
     @Override
     public CacheKillerId getIdentifier() {
-        return CacheKillerId.with("mid", "hello");
+        return CacheKillerId.with("oeai", "sysParam");
     }
 }

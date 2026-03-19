@@ -1,4 +1,4 @@
-package com.redhat.kafkacachekiller.config.prop;
+package com.iisigroup.df.config.prop;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -45,7 +45,7 @@ spring:
               packages: '*'
             value:
               default:
-                type: com.redhat.kafkacachekiller.cache.CacheKillerInfo
+                type: com.iisigroup.df.cache.CacheKillerInfo
     template:
       default-topic: cache-kill
     bootstrap-servers: ${spring_kafka_bootstrap_servers:localhost:29092}

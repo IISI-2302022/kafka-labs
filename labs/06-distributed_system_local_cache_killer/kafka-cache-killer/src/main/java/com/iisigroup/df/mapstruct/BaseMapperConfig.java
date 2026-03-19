@@ -1,4 +1,4 @@
-package com.redhat.kafkacachekiller.mapstruct;
+package com.iisigroup.df.mapstruct;
 
 import org.mapstruct.MapperConfig;
 import org.mapstruct.ReportingPolicy;

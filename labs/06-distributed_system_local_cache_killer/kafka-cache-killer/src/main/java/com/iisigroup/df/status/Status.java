@@ -1,4 +1,4 @@
-package com.redhat.kafkacachekiller.status;
+package com.iisigroup.df.status;
 
 public enum Status {
     SUCCESS,

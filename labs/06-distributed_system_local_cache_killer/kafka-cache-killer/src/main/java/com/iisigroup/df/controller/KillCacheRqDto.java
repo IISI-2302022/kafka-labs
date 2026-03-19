@@ -1,7 +1,7 @@
-package com.redhat.kafkacachekiller.controller;
+package com.iisigroup.df.controller;
 
-import com.redhat.kafkacachekiller.cache.CacheKillerInfo;
-import com.redhat.kafkacachekiller.mapstruct.BaseMapperConfig;
+import com.iisigroup.df.cache.CacheKillerInfo;
+import com.iisigroup.df.mapstruct.BaseMapperConfig;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
