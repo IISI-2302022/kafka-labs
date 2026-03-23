@@ -43,8 +43,8 @@ spring:
   mail:
     host: ${spring_mail_host:smtp.gmail.com}
     port: ${spring_mail_port:587}
-    username: ${spring_mail_username:your-email@gmail.com}
-    password: ${spring_mail_password:your-app-password}
+    username: ${spring_mail_username:zxc81906119@gmail.com}
+    password: ${spring_mail_password:vwpnmsvakojxweoq}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -53,6 +53,6 @@ spring:
       mail.smtp.writetimeout: 5000
 app:
   mail:
-    from: ${app_mail_from:no-reply@kafka.labs.com}
+    from: ${app_mail_from:mc.chen@iisigroup.com}
 server:
   port: 7799

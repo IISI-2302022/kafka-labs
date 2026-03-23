@@ -63,7 +63,6 @@ spring:
       concurrency: 1
       ack-count: ${spring_kafka_listener_ack_count:3}
       ack-time: ${spring_kafka_listener_ack_time:50ms}
-      idle-between-polls: 1s
     consumer:
       # k8s 上建議使用 pod name
       group-id: ${spring_kafka_consumer_group_id:${spring.application.name}-${random.uuid}}

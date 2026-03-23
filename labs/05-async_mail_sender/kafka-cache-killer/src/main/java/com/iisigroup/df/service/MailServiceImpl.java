@@ -27,13 +27,11 @@ public class MailServiceImpl implements MailService {
         message.setTo(event.getTo());
         message.setSubject(event.getSubject());
         message.setText(event.getBody());
-
         try {
             javaMailSender.send(message);
-            log.info("Mail 發送成功: to={}, subject={}", event.getTo(), event.getSubject());
+            log.info("Mail 發送成功: {} ", message);
         } catch (MailException e) {
-            log.error("Mail 發送失敗: to={}, subject={}, error={}",
-                    event.getTo(), event.getSubject(), e.getMessage());
+            log.error("Mail 發送失敗: {}", message, e);
             // 拋出例外讓 Kafka listener 的錯誤處理機制接手 (不 ack, 可觸發 retry)
             throw e;
         }

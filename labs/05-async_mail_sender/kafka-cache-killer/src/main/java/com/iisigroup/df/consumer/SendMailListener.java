@@ -19,9 +19,9 @@ public class SendMailListener {
             topics = "${spring.kafka.template.default-topic}"
     )
     public void listen(SendMailEvent sendMailEvent) {
-        log.info("Received mail event: to={}, subject={}", sendMailEvent.getTo(), sendMailEvent.getSubject());
+        log.info("Received mail event: {}", sendMailEvent);
         mailService.send(sendMailEvent);
-        log.info("Sent mail successfully: to={}, subject={}", sendMailEvent.getTo(), sendMailEvent.getSubject());
+        log.info("Sent mail successfully: {} ", sendMailEvent);
         // 可優化 , 將 send mail event 加上唯一標示 : msgId
         // 方法 1 搭配 redis 或 db
         // 接收 event 時
