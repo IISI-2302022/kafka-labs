@@ -35,7 +35,7 @@ public class CustomProducerPartitionerTest {
         val countDownLatch = new CountDownLatch(limit);
 
         for (int i = 0; i < limit; i++) {
-            val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, "haha" + i));
+            val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, i, null, "haha" + i));
             // 不管成功失敗都會進入 callback func
             future.whenComplete((sendResult, throwable) -> {
                 countDownLatch.countDown();
