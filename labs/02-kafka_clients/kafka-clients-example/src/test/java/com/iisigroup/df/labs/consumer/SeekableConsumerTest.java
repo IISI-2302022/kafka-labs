@@ -29,7 +29,7 @@ import static com.iisigroup.df.labs.constant.Constants.TEST_TOPIC;
  * @see org.apache.kafka.clients.consumer.KafkaConsumer#offsetsForTimes(Map)
  */
 @Slf4j
-public class OtherConsumerTest {
+public class SeekableConsumerTest {
 
 
     /**
