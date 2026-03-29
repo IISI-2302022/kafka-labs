@@ -31,6 +31,8 @@ fi
 
 "${container_engine}" network create --driver bridge kafka-labs
 
+mkdir -p "${THIS_SHELL_DIR}/kafka/data"
+
 "${container_engine}" run -d \
   --name kafka \
   --network kafka-labs \
@@ -54,6 +56,8 @@ fi
   -e KAFKA_LOG_DIRS=/var/lib/kafka/data \
   -e KAFKA_DELETE_TOPIC_ENABLE="true" \
   confluentinc/cp-kafka:7.9.1
+
+mkdir -p "${THIS_SHELL_DIR}/kafka-ui/data"
 
 "${container_engine}" run -d \
   --name kafka-ui-demo \

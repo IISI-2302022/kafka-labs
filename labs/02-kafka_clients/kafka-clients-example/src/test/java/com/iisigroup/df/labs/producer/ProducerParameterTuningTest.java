@@ -28,7 +28,7 @@ import static com.iisigroup.df.labs.constant.Constants.VALUE_PREFIX;
  * @see org.apache.kafka.clients.producer.ProducerConfig
  */
 @Slf4j
-public class OtherProducerTest {
+public class ProducerParameterTuningTest {
 
     /**
      * 提升吞吐量（Increase Throughput）。
