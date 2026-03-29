@@ -144,10 +144,9 @@ public class ProducerPartitionerTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                val key = STATIC_KEY + i;
                 // 未指定 partition、有指定 key → murmur2(key 的 byte[]) % numPartitions
                 // 不同 key 產生不同 hash 值，因此可能分散到不同 Partition
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, key, VALUE_PREFIX + i), (metadata, exception) -> {
+                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, STATIC_KEY + i, VALUE_PREFIX + i), (metadata, exception) -> {
                     if (exception != null) {
                         log.error("send message error", exception);
                         return;
@@ -190,7 +189,8 @@ public class ProducerPartitionerTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i), (metadata, exception) -> {
+                // 故意指定 partition 為 i，但實際上會被 ZeroOnlyPartitioner 覆蓋，所有訊息都會寫入 Partition 0
+                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, i, null, VALUE_PREFIX + i), (metadata, exception) -> {
                     if (exception != null) {
                         log.error("send message error", exception);
                         return;
