@@ -1,11 +1,10 @@
----
 spring:
   config:
     import: classpath:application-common.yml
 ---
 spring:
   application:
-    name: async-mail-sender
+    name: async-mail-sender-producer
   kafka:
     producer:
       # 發送端資料壓縮演算法
@@ -21,38 +20,8 @@ spring:
         linger:
           ms: 5
       acks: '0'
-    consumer:
-      # consumer group id
-      group-id: send-mail-group
-      # 消費資料 key 的反序列化器
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      # 消費資料 value 的反序列化器
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      # 手動 commit offset (搭配 MANUAL_IMMEDIATE ack mode)
-      enable-auto-commit: false
-      # 當沒有 offset 時從頭開始消費
-      auto-offset-reset: latest
-      properties:
-        # 信任反序列化的 package
-        spring.json.trusted.packages: com.iisigroup.df.model.SendMailEvent
-    listener:
-      ack-mode: record
     template:
       default-topic: send-mail-topic
     bootstrap-servers: ${spring_kafka_bootstrap_servers:localhost:29092}
-  mail:
-    host: ${spring_mail_host:smtp.gmail.com}
-    port: ${spring_mail_port:587}
-    username: ${spring_mail_username:zxc81906119@gmail.com}
-    password: ${spring_mail_password:vwpnmsvakojxweoq}
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
-      mail.smtp.connectiontimeout: 5000
-      mail.smtp.timeout: 5000
-      mail.smtp.writetimeout: 5000
-app:
-  mail:
-    from: ${app_mail_from:mc.chen@iisigroup.com}
 server:
-  port: 7799
+  port: 7798
