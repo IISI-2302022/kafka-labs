@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -22,8 +21,7 @@ import static com.iisigroup.df.labs.consumer.ConsumerAutoCommitTest.TEST_TOPIC;
 @Slf4j
 
 @MySpringBootTest
-@Import(KafkaTxService.class)
-public class ProducerTest {
+public class SimpleProducerTest {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
