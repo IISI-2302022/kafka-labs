@@ -1,4 +1,3 @@
----
 proj:
   profile: ${proj_profile:prod}
 spring:
