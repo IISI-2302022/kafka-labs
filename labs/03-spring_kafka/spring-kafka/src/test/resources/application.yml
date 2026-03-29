@@ -10,6 +10,7 @@ spring:
     admin:
       # 啟動時是否自動創建 topic
       auto-create: ${spring_kafka_admin_auto_create:false}
+      # 如果連線 kafka 失敗直接報錯
       fail-fast: ${spring_kafka_admin_fail_fast:true}
       # 是否修改 topic 設定
       modify-topic-configs: ${spring_kafka_admin_modify_topic_configs:true}
@@ -63,7 +64,8 @@ spring:
       concurrency: 1
       ack-count: ${spring_kafka_listener_ack_count:3}
       ack-time: ${spring_kafka_listener_ack_time:50ms}
-      poll-timeout: 5s
+      # 若無資料 , poll 時最多等待時間
+      poll-timeout: 1s
     consumer:
       # k8s 上建議使用 pod name
       group-id: ${spring_kafka_consumer_group_id:${spring.application.name}-${random.uuid}}
@@ -108,5 +110,3 @@ spring:
     template:
       default-topic: cache-kill
     bootstrap-servers: ${spring_kafka_bootstrap_servers:localhost:9092}
-server:
-  port: 7777
