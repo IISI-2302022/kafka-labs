@@ -29,6 +29,8 @@ else
   exit 1
 fi
 
+mkdir -p "${THIS_SHELL_DIR}/mysql/data"
+
 "${container_engine}" run -d \
   --name mysql \
   --network kafka-labs \
@@ -42,6 +44,8 @@ fi
   -v "${THIS_SHELL_DIR}/mysql/init-scripts:/docker-entrypoint-initdb.d" \
   -v "${THIS_SHELL_DIR}/mysql/data:/var/lib/mysql" \
   mysql:8.0
+
+mkdir -p "${THIS_SHELL_DIR}/postgres/data"
 
 "${container_engine}" run -d \
   --name postgresql \
