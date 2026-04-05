@@ -6,3 +6,6 @@ spring:
 spring:
   application:
     name: kafka-log-demo
+kafka:
+  logs:
+    topic: ${kafka_logs_topic:ap-logs}
