@@ -10,16 +10,28 @@ spring:
       # consumer group id
       group-id: send-mail-group
       # 消費資料 key 的反序列化器
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       # 消費資料 value 的反序列化器
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       # 手動 commit offset (搭配 MANUAL_IMMEDIATE ack mode)
       enable-auto-commit: false
       # 當沒有 offset 時從頭開始消費
       auto-offset-reset: latest
       properties:
-        # 信任反序列化的 package
-        spring.json.trusted.packages: com.iisigroup.df.model.SendMailEvent
+        spring:
+          deserializer:
+            key:
+              delegate:
+                class: org.apache.kafka.common.serialization.StringDeserializer
+            value:
+              delegate:
+                class: ${consumer_value_deserializer:org.springframework.kafka.support.serializer.JsonDeserializer}
+          json:
+            trusted:
+              packages: com.iisigroup.df.model
+            value:
+              default:
+                type: com.iisigroup.df.model.SendMailEvent
     listener:
       ack-mode: record
     template:
@@ -38,6 +50,6 @@ spring:
       mail.smtp.writetimeout: 5000
 app:
   mail:
-    from: ${app_mail_from:mc.chen@iisigroup.com}
+    from: ${app_mail_from:${spring.mail.username}}
 server:
   port: 7799

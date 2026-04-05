@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KafkaCacheKillerApplication {
+public class AsyncMailSenderProducerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KafkaCacheKillerApplication.class, args);
+        SpringApplication.run(AsyncMailSenderProducerApplication.class, args);
     }
 
 }

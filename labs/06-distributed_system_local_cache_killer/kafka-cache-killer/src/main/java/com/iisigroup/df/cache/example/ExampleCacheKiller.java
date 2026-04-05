@@ -19,6 +19,6 @@ public class ExampleCacheKiller implements CacheKiller {
 
     @Override
     public CacheKillerId getIdentifier() {
-        return CacheKillerId.with("mid", "hello");
+        return CacheKillerId.with("SYSTEM", "mySysParam");
     }
 }
