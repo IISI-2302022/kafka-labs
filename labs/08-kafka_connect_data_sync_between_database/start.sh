@@ -29,8 +29,6 @@ else
   exit 1
 fi
 
-mkdir -p "${THIS_SHELL_DIR}/mysql/data"
-
 "${container_engine}" run -d \
   --name mysql \
   --network kafka-labs \
@@ -41,11 +39,9 @@ mkdir -p "${THIS_SHELL_DIR}/mysql/data"
   -e MYSQL_DATABASE=kafka_source \
   -e MYSQL_USER=ming \
   -e MYSQL_PASSWORD=ming \
-  -v "${THIS_SHELL_DIR}/mysql/init-scripts:/docker-entrypoint-initdb.d" \
-  -v "${THIS_SHELL_DIR}/mysql/data:/var/lib/mysql" \
+  -v "${THIS_SHELL_DIR}/mysql/init-scripts/:/docker-entrypoint-initdb.d/:ro" \
+  -v mysql-data:/var/lib/mysql \
   mysql:8.0
-
-mkdir -p "${THIS_SHELL_DIR}/postgres/data"
 
 "${container_engine}" run -d \
   --name postgresql \
@@ -55,7 +51,7 @@ mkdir -p "${THIS_SHELL_DIR}/postgres/data"
   -e POSTGRES_DB=kafka_sink \
   -e POSTGRES_USER=admin \
   -e POSTGRES_PASSWORD=admin \
-  -v "${THIS_SHELL_DIR}/postgres/data:/var/lib/postgresql/data" \
+  -v postgres-data:/var/lib/postgresql/data \
   postgres:13.16
 
 
