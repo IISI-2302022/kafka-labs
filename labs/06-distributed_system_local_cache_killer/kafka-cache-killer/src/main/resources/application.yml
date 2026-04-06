@@ -40,7 +40,7 @@ spring:
                 class: ${consumer_value_deserializer:org.springframework.kafka.support.serializer.JsonDeserializer}
           json:
             trusted:
-              packages: '*'
+              packages: com.iisigroup.df.cache
             value:
               default:
                 type: com.iisigroup.df.cache.CacheKillerInfo
