@@ -6,6 +6,19 @@ spring:
   application:
     name: async-mail-sender-consumer
   kafka:
+    producer:
+      # 預設無限次數 , 應設定合理 retry 次數
+      retries: 3
+      # 發送端資料壓縮演算法
+      compression-type: zstd
+      # 發送資料 key 的序列化器
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 發送資料 value 的序列化器
+      value-serializer: ${producer_value_serializer:org.springframework.kafka.support.serializer.JsonSerializer}
+      properties:
+        # 發送端暫存 partition 資料未達 batch-size 值 , 但從第一筆開始等待發送時間已超過此毫秒數 , 依然進行發送
+        linger:
+          ms: 5
     consumer:
       # consumer group id
       group-id: send-mail-group

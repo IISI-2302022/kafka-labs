@@ -1,8 +1,11 @@
 <configuration>
 
+    <springProperty name="svc_name" source="spring.application.name" scope="context"/>
+    <springProperty name="svc_profile" source="proj.profile" scope="context"/>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d [%-28.28logger{28}] [%thread] [%-5level] %msg%n</pattern>
+            <pattern>%d [%-28.28logger{28}] [%thread] [%-5level] [${svc_name}] [${svc_profile}] %msg%n</pattern>
         </encoder>
     </appender>
 
