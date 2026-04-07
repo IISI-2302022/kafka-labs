@@ -32,7 +32,7 @@ public class ProducerPartitionerTest {
 
     @Test
     public void defaultPartitionerProduceWithPartition() throws ExecutionException, InterruptedException, TimeoutException {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, i, null, "haha" + i));
             val sendResult = future.get(5, TimeUnit.SECONDS);
             val recordMetadata = sendResult.getRecordMetadata();
@@ -43,7 +43,7 @@ public class ProducerPartitionerTest {
 
     @Test
     public void defaultPartitionerProduceWithSameKey() throws ExecutionException, InterruptedException, TimeoutException {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, STATIC_KEY, "haha" + i));
             val sendResult = future.get(5, TimeUnit.SECONDS);
             val recordMetadata = sendResult.getRecordMetadata();
@@ -53,7 +53,7 @@ public class ProducerPartitionerTest {
 
     @Test
     public void defaultPartitionerProduceWithDifferentKey() throws ExecutionException, InterruptedException, TimeoutException {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, STATIC_KEY + i, "haha" + i));
             val sendResult = future.get(5, TimeUnit.SECONDS);
             val recordMetadata = sendResult.getRecordMetadata();

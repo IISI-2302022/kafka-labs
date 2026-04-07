@@ -53,15 +53,18 @@ public class SimpleProducerTest {
             val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, "haha" + i));
             // 不管成功失敗都會進入 callback func
             future.whenComplete((sendResult, throwable) -> {
-                countDownLatch.countDown();
-                if (throwable != null) {
-                    // 發送失敗
-                    log.error("send message error", throwable);
-                    return;
+                try {
+                    if (throwable != null) {
+                        // 發送失敗
+                        log.error("send message error", throwable);
+                        return;
+                    }
+                    // kafka 回傳之結果資訊
+                    val recordMetadata = sendResult.getRecordMetadata();
+                    log.info("topic: {}, partition: {}, offset: {}, timestamp: {}", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset(), recordMetadata.timestamp());
+                } finally {
+                    countDownLatch.countDown();
                 }
-                // kafka 回傳之結果資訊
-                val recordMetadata = sendResult.getRecordMetadata();
-                log.info("topic: {}, partition: {}, offset: {}, timestamp: {}", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset(), recordMetadata.timestamp());
             });
         }
 
