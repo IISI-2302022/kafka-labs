@@ -29,4 +29,14 @@ public class ConsumerGroupDefaultPartitionAssignStrategyTest {
         System.out.println("Received message: " + record);
     }
 
+    @KafkaListener(topics = TEST_TOPIC, groupId = "ConsumerGroupDefaultPartitionAssignStrategyTest")
+    public void listen1(ConsumerRecord<String, String> record) {
+        System.out.println("Received message: " + record);
+    }
+
+    @KafkaListener(topics = TEST_TOPIC, groupId = "ConsumerGroupDefaultPartitionAssignStrategyTest")
+    public void listen2(ConsumerRecord<String, String> record) {
+        System.out.println("Received message: " + record);
+    }
+
 }
