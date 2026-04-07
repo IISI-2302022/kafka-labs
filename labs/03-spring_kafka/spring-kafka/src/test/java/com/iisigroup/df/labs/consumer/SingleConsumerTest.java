@@ -31,7 +31,7 @@ public class SingleConsumerTest {
         System.out.println("Received message: " + record);
     }
 
-    @KafkaListener(topics = TEST_TOPIC, groupId = "SingleConsumerTest.listen1")
+    @KafkaListener(topics = TEST_TOPIC, batch = "true", groupId = "SingleConsumerTest.listen1")
     public void listen1(List<ConsumerRecord<String, String>> records) {
         System.out.println("Received message: " + records);
     }
