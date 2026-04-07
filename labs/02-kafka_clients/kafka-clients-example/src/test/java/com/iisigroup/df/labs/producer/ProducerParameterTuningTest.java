@@ -48,8 +48,8 @@ public class ProducerParameterTuningTest {
 
         // 每個 batch 最大 16 KB，Producer 會把多筆訊息打包成一個 batch 再一起發送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-        // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出，避免訊息延遲太久
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        // 就算 batch 還沒裝滿，最多等 5 毫秒就強制送出，避免訊息延遲太久
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5);
 
         // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
@@ -103,7 +103,7 @@ public class ProducerParameterTuningTest {
         // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5);
 
         // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
@@ -127,7 +127,17 @@ public class ProducerParameterTuningTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i));
+                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i), (metadata, exception) -> {
+                    if (exception != null) {
+                        log.error("send message error", exception);
+                        return;
+                    }
+                    val offset = metadata.offset();
+                    val partition = metadata.partition();
+                    val timestamp = metadata.timestamp();
+                    val topic = metadata.topic();
+                    log.info("offset: {}, partition: {}, timestamp: {}, topic: {}", offset, partition, timestamp, topic);
+                });
             }
         }
     }
@@ -158,7 +168,7 @@ public class ProducerParameterTuningTest {
         // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5);
 
         // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
@@ -184,7 +194,17 @@ public class ProducerParameterTuningTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i));
+                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i), (metadata, exception) -> {
+                    if (exception != null) {
+                        log.error("send message error", exception);
+                        return;
+                    }
+                    val offset = metadata.offset();
+                    val partition = metadata.partition();
+                    val timestamp = metadata.timestamp();
+                    val topic = metadata.topic();
+                    log.info("offset: {}, partition: {}, timestamp: {}, topic: {}", offset, partition, timestamp, topic);
+                });
             }
         }
     }
@@ -211,7 +231,7 @@ public class ProducerParameterTuningTest {
         // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5);
 
         // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
@@ -246,7 +266,17 @@ public class ProducerParameterTuningTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i));
+                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i), (metadata, exception) -> {
+                    if (exception != null) {
+                        log.error("send message error", exception);
+                        return;
+                    }
+                    val offset = metadata.offset();
+                    val partition = metadata.partition();
+                    val timestamp = metadata.timestamp();
+                    val topic = metadata.topic();
+                    log.info("offset: {}, partition: {}, timestamp: {}, topic: {}", offset, partition, timestamp, topic);
+                });
             }
         }
     }

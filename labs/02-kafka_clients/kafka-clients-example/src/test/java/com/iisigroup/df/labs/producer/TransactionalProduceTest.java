@@ -66,7 +66,7 @@ public class TransactionalProduceTest {
         // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5);
         // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
         // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
@@ -146,7 +146,7 @@ public class TransactionalProduceTest {
         // 每個 batch 最大 16 KB，把多筆訊息打包一起送，減少網路來回次數
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         // 就算 batch 還沒裝滿，最多等 50 毫秒就強制送出
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 50);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5);
         // Producer 本地端的緩衝區大小，設為 64 MB（預設 32 MB），能暫存更多還沒送出的訊息
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
         // 壓縮演算法，zstd 壓縮率好且速度快，能減少傳輸資料量
@@ -189,11 +189,7 @@ public class TransactionalProduceTest {
                 }
 
                 // 模擬業務邏輯錯誤，強制觸發回滾
-                if (true) {
-                    throw new RuntimeException("test rollback");
-                }
-
-                kafkaProducer.commitTransaction();
+                throw new RuntimeException("test rollback");
             } catch (Exception e) {
                 // 中止交易：所有未提交的訊息對 read_committed Consumer 不可見
                 kafkaProducer.abortTransaction();
