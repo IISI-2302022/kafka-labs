@@ -120,11 +120,13 @@ public class ConsumerCommitOffsetTest {
             kafkaConsumer.subscribe(topics);
             while (true) {
                 val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
-                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                if (!consumerRecords.isEmpty()) {
+                    for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                        log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                    }
+                    // 同步提交：阻塞等待 Broker 確認，確保 Offset 已持久化
+                    kafkaConsumer.commitSync();
                 }
-                // 同步提交：阻塞等待 Broker 確認，確保 Offset 已持久化
-                kafkaConsumer.commitSync();
             }
         }
     }
@@ -213,11 +215,13 @@ public class ConsumerCommitOffsetTest {
             kafkaConsumer.subscribe(topics);
             while (true) {
                 val consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
-                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                    log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                if (!consumerRecords.isEmpty()) {
+                    for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                        log.info("offset: {}, partition: {}, key: {}, value: {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+                    }
+                    // 非同步提交：不阻塞，背景發送提交請求
+                    kafkaConsumer.commitAsync();
                 }
-                // 非同步提交：不阻塞，背景發送提交請求
-                kafkaConsumer.commitAsync();
             }
         }
     }
