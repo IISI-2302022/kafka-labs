@@ -60,7 +60,7 @@ mkdir -p "${THIS_SHELL_DIR}/kafka/data"
 mkdir -p "${THIS_SHELL_DIR}/kafka-ui/data"
 
 "${container_engine}" run -d \
-  --name kafka-ui-demo \
+  --name kafka-ui \
   --network kafka-labs \
   -p 8080:8080 \
   --restart always \
