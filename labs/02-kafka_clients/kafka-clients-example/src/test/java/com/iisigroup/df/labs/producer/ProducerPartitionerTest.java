@@ -189,8 +189,7 @@ public class ProducerPartitionerTest {
 
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
-                // 故意指定 partition 為 i，但實際上會被 ZeroOnlyPartitioner 覆蓋，所有訊息都會寫入 Partition 0
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, i, null, VALUE_PREFIX + i), (metadata, exception) -> {
+                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i), (metadata, exception) -> {
                     if (exception != null) {
                         log.error("send message error", exception);
                         return;
