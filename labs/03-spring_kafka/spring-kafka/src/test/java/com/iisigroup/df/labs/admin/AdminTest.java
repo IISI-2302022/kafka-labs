@@ -23,7 +23,7 @@ public class AdminTest {
 
     @Test
     public void testAutoCreateTopic() throws InterruptedException, ExecutionException, TimeoutException {
-        TimeUnit.SECONDS.sleep(5);
+        TimeUnit.SECONDS.sleep(10);
     }
 
 }
