@@ -70,7 +70,7 @@ public class ConsumerGroupTest {
         // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消費者群組 ID：相同 group.id 的 Consumer 會共同分擔 Partition，每個 Partition 只會被群組內的一個 Consumer 消費
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_default");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             val topics = new ArrayList<String>();
             topics.add(TEST_TOPIC);
@@ -101,7 +101,7 @@ public class ConsumerGroupTest {
         // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消費者群組 ID：與 Consumer0 使用相同的 group.id，加入群組後會觸發 Rebalance 重新分配 Partition
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_default");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             val topics = new ArrayList<String>();
             topics.add(TEST_TOPIC);
@@ -132,7 +132,7 @@ public class ConsumerGroupTest {
         // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消費者群組 ID：若 Consumer 數量超過 Partition 數量，多出的 Consumer 會閒置（idle）
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_default");
         try (val kafkaConsumer = new KafkaConsumer<String, String>(properties)) {
             val topics = new ArrayList<String>();
             topics.add(TEST_TOPIC);
@@ -261,7 +261,7 @@ public class ConsumerGroupTest {
         // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消費者群組 ID：使用不同的 group.id 以便與預設策略的群組區分
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_sticky");
 
         properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
 
@@ -288,7 +288,7 @@ public class ConsumerGroupTest {
         // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消費者群組 ID：與 Consumer0 相同群組，使用 RoundRobin 策略
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_sticky");
 
         properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
 
@@ -315,7 +315,7 @@ public class ConsumerGroupTest {
         // 訊息的 value 要用什麼方式從 byte[] 轉回物件，這裡用字串反序列化器
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消費者群組 ID：與 Consumer0、Consumer1 相同群組，使用 RoundRobin 策略
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_rb");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_sticky");
 
         properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
 
