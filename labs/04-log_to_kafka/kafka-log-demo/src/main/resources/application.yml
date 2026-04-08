@@ -7,5 +7,6 @@ spring:
   application:
     name: kafka-log-demo
 kafka:
+  bootstrap-servers: localhost:29092
   logs:
     topic: ${kafka_logs_topic:ap-logs}
