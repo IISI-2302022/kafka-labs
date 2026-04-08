@@ -1,0 +1,48 @@
+{
+  "@timestamp": {
+    "$resolver": "timestamp",
+    "pattern": {
+      "format": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+      "timeZone": "UTC"
+    }
+  },
+  "log.level": {
+    "$resolver": "level",
+    "field": "name"
+  },
+  "logger": {
+    "$resolver": "logger",
+    "field": "name"
+  },
+  "thread": {
+    "$resolver": "thread",
+    "field": "name"
+  },
+  "message": {
+    "$resolver": "message",
+    "stringified": true
+  },
+  "application": "${spring:spring.application.name}",
+  "hostname": "${hostName}",
+  "exception": {
+    "class": {
+      "$resolver": "exception",
+      "field": "className"
+    },
+    "message": {
+      "$resolver": "exception",
+      "field": "message"
+    },
+    "stacktrace": {
+      "$resolver": "exception",
+      "field": "stackTrace",
+      "stackTrace": {
+        "stringified": true
+      }
+    }
+  },
+  "mdc": {
+    "$resolver": "mdc"
+  }
+}
+

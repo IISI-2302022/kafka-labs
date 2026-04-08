@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+
+        <!-- ==================== Console Appender ==================== -->
+        <!-- 控制台輸出：一般 PatternLayout 格式 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- ==================== Kafka Appender ==================== -->
+        <!--
+            最佳實踐重點：
+            1. 使用 JsonTemplateLayout（log4j-layout-template-json）取代 PatternLayout
+               - 結構化 JSON 格式，方便 ELK/OpenSearch 等系統解析
+               - 高效能：GC-free、預編譯模板
+            2. syncSend="false"：非同步發送，避免阻塞應用主執行緒
+            3. ignoreExceptions="false"：搭配 Failover Appender 使用
+        -->
+        <Kafka name="KafkaAppender" topic="${spring:kafka.logs.topic}"
+               syncSend="false" ignoreExceptions="false">
+
+            <!-- JSON 結構化日誌格式 -->
+            <JsonTemplateLayout eventTemplateUri="classpath:log/LogJsonTemplate.json"/>
+
+            <!-- Kafka Producer 連線設定 -->
+            <Property name="bootstrap.servers">localhost:29092</Property>
+
+            <!-- ===== 可靠性設定 ===== -->
+            <Property name="acks">1</Property>              <!-- 1=Leader 確認即可；若需最高可靠用 "all" -->
+            <Property name="retries">3</Property>            <!-- 失敗重試次數 -->
+            <Property name="retry.backoff.ms">100</Property> <!-- 重試間隔 -->
+            <Property name="max.block.ms">3000</Property>    <!-- Producer 內部 buffer 滿時最大等待，避免長時間阻塞 -->
+
+            <!-- ===== 效能優化設定 ===== -->
+            <Property name="linger.ms">5</Property>          <!-- 微批次延遲，提高吞吐量 -->
+            <Property name="batch.size">16384</Property>     <!-- 批次大小 (bytes) -->
+            <Property name="buffer.memory">33554432</Property> <!-- Producer 緩衝區 32MB -->
+            <Property name="compression.type">zstd</Property>  <!-- 壓縮演算法：zstd 壓縮率高且快 -->
+        </Kafka>
+
+        <!-- ==================== Failover Appender ==================== -->
+        <!-- 當 Kafka 不可用時，自動降級輸出到 Console，避免日誌遺失 -->
+        <Failover name="KafkaFailover" primary="KafkaAppender">
+            <Failovers>
+                <AppenderRef ref="Console"/>
+            </Failovers>
+        </Failover>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <!-- 使用 Failover 包裝的 Kafka Appender -->
+            <AppenderRef ref="KafkaFailover"/>
+        </Root>
+
+        <!--
+            【重要】避免 Kafka 客戶端內部日誌觸發 KafkaAppender，造成無限遞歸
+            必須將 org.apache.kafka 的日誌只輸出到 Console
+        -->
+        <Logger name="org.apache.kafka" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
