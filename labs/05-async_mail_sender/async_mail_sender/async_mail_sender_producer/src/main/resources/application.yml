@@ -8,8 +8,6 @@ spring:
   kafka:
     producer:
       acks: '0'
-      # 預設無限次數 , 應設定合理 retry 次數
-      retries: 0
       # 發送端資料壓縮演算法
       compression-type: zstd
       # 發送資料 key 的序列化器
