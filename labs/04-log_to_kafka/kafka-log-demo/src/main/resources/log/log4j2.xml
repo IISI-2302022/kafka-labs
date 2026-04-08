@@ -51,7 +51,6 @@
 
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="Console"/>
             <!-- 使用 Failover 包裝的 Kafka Appender -->
             <AppenderRef ref="KafkaFailover"/>
         </Root>
