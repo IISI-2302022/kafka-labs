@@ -29,13 +29,10 @@
             <!-- ===== 可靠性設定 ===== -->
             <Property name="acks">1</Property>              <!-- 1=Leader 確認即可；若需最高可靠用 "all" -->
             <Property name="retries">3</Property>            <!-- 失敗重試次數 -->
-            <Property name="retry.backoff.ms">100</Property> <!-- 重試間隔 -->
             <Property name="max.block.ms">3000</Property>    <!-- Producer 內部 buffer 滿時最大等待，避免長時間阻塞 -->
 
             <!-- ===== 效能優化設定 ===== -->
             <Property name="linger.ms">5</Property>          <!-- 微批次延遲，提高吞吐量 -->
-            <Property name="batch.size">16384</Property>     <!-- 批次大小 (bytes) -->
-            <Property name="buffer.memory">33554432</Property> <!-- Producer 緩衝區 32MB -->
             <Property name="compression.type">zstd</Property>  <!-- 壓縮演算法：zstd 壓縮率高且快 -->
         </Kafka>
 
