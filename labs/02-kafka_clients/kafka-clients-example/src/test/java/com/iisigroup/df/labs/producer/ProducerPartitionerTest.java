@@ -51,7 +51,7 @@ public class ProducerPartitionerTest {
      * </p>
      */
     @Test
-    public void defaultPartitionerProduceWithPartition() {
+    public void produceWithPartition() {
         val properties = new Properties();
 
         // Kafka 叢集的連線位址（host:port），Producer 會透過這個位址找到整個叢集
