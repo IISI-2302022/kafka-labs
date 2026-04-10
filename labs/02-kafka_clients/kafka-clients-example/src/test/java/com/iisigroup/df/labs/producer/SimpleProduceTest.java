@@ -131,7 +131,12 @@ public class SimpleProduceTest {
         try (val kafkaProducer = new KafkaProducer<String, String>(properties)) {
             for (int i = 0; i < 5; i++) {
                 // .get() 會阻塞直到訊息成功寫入或拋出例外
-                kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i)).get();
+                val metadata = kafkaProducer.send(new ProducerRecord<>(TEST_TOPIC, VALUE_PREFIX + i)).get();
+                val offset = metadata.offset();
+                val partition = metadata.partition();
+                val timestamp = metadata.timestamp();
+                val topic = metadata.topic();
+                log.info("offset: {}, partition: {}, timestamp: {}, topic: {}", offset, partition, timestamp, topic);
             }
         }
     }
