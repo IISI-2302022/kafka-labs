@@ -6,7 +6,8 @@
 target/
 # BlueJ files
 *.ctxt
-
+# kafka volume data
+labs/01-kafka_install/kafka/data/
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
