@@ -26,7 +26,7 @@ spring:
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       # 消費資料 value 的反序列化器
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      # 手動 commit offset (搭配 MANUAL_IMMEDIATE ack mode)
+      # 手動 commit offset
       enable-auto-commit: false
       # 當沒有 offset 時從頭開始消費
       auto-offset-reset: latest
