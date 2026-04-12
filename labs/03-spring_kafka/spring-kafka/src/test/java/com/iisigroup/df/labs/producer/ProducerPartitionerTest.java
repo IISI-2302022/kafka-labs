@@ -31,7 +31,7 @@ public class ProducerPartitionerTest {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Test
-    public void defaultPartitionerProduceWithPartition() throws ExecutionException, InterruptedException, TimeoutException {
+    public void partitionerProduceWithPartition() throws ExecutionException, InterruptedException, TimeoutException {
         for (int i = 0; i < 7; i++) {
             val future = kafkaTemplate.send(new ProducerRecord<>(TEST_TOPIC, i, null, "haha" + i));
             val sendResult = future.get(5, TimeUnit.SECONDS);
