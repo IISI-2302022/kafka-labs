@@ -45,7 +45,7 @@ public class SimpleProducerTest {
     }
 
     @Test
-    public void sendAsync() throws InterruptedException {
+    public void sendAsyncWithCallback() throws InterruptedException {
         val limit = 5;
         val countDownLatch = new CountDownLatch(limit);
 
