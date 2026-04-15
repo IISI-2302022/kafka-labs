@@ -16,7 +16,7 @@ spring:
     producer:
       # leader 接收資料存入硬碟 且 isr follows 皆進行同步資料並存入硬碟
       acks: all
-      # 發送端暫存 partition 資料達此值 , 方可進行將資料發送
+      # 發送端暫存 partition 資料大小達此值 , 方可進行將資料發送
       batch-size: 16KB
       # 發送端資料暫存記憶體總大小
       buffer-memory: 64MB
@@ -50,8 +50,7 @@ spring:
       # 其中也有提供開發者手動 commit offset 之模式 => MANUAL & MANUAL_IMMEDIATE
       ack-mode: ${spring_kafka_listener_ack_mode:BATCH}
       # 需開啟 MANUAL or MANUAL_IMMEDIATE 模式為前提
-      # consumer offset 是否非同步 commit
-      # 建議是同步 , 除非效能太差
+      # 在 listener 方法中可再開啟執行緒處理資料
       async-acks: false
       # 一筆一筆處理資料 , 如要一次處理多筆 , 可改成 batch
       type: single
@@ -59,14 +58,16 @@ spring:
       auto-startup: true
       # 在指定消費者組中創建多少個消費者執行續並行消費
       # 若微服務架構 , 採叢集部屬應用
-      # 若單體架構 , 可調高設定
+      # 若單體架構 , 可調高設定 , 但需考量多執行緒問題
       concurrency: 1
+      # ack-mode 為 COUNT or COUNT_TIME 時 , 每三筆資料處理成功 , 就會進行 commit offset
       ack-count: ${spring_kafka_listener_ack_count:3}
+      # ack-mode 為 TIME or COUNT_TIME 時 , 每 50ms 就會進行 commit offset
       ack-time: ${spring_kafka_listener_ack_time:50ms}
       # 若無資料 , poll 時最多等待時間
       poll-timeout: 1s
     consumer:
-      # k8s 上建議使用 pod name
+      # consumer group id , 相同 group id 之 consumer 會歸類為相同 consumer group
       group-id: ${spring_kafka_consumer_group_id:${spring.application.name}-${random.uuid}}
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       # 避免 kafka 資料格式問題 , 使用這個反序列化器 , 將失敗的轉成 null , 在 listener 中進行處理
