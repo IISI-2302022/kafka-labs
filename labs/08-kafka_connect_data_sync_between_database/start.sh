@@ -80,5 +80,3 @@ fi
   -e CONNECT_INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter \
   -e CONNECT_PLUGIN_PATH=/usr/share/java/,/usr/share/confluent-hub-components/ \
   confluentinc/cp-kafka-connect:7.9.1
-
-#"${container_engine}" compose -f "${THIS_SHELL_DIR}/docker-compose.yml" up -d --build

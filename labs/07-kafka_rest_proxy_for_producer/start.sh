@@ -38,5 +38,3 @@ fi
   -e KAFKA_REST_BOOTSTRAP_SERVERS='kafka:9092' \
   -e KAFKA_REST_LISTENERS="http://0.0.0.0:8082" \
   confluentinc/cp-kafka-rest:7.9.1
-
-#"${container_engine}" compose -f "${THIS_SHELL_DIR}/docker-compose.yml" up -d --build

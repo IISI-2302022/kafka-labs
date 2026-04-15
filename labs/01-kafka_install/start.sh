@@ -54,7 +54,6 @@ mkdir -p "${THIS_SHELL_DIR}/kafka/data"
   -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 \
   -e KAFKA_AUTO_CREATE_TOPICS_ENABLE="true" \
   -e KAFKA_LOG_DIRS=/var/lib/kafka/data \
-  -e KAFKA_DELETE_TOPIC_ENABLE="true" \
   confluentinc/cp-kafka:7.9.1
 
 mkdir -p "${THIS_SHELL_DIR}/kafka-ui/data"
@@ -70,5 +69,3 @@ mkdir -p "${THIS_SHELL_DIR}/kafka-ui/data"
   -e AUTH_TYPE=DISABLED \
   -e LOGGING_LEVEL_ROOT=INFO \
   provectuslabs/kafka-ui:v0.7.2
-
-#"${container_engine}" compose -f "${THIS_SHELL_DIR}/docker-compose.yml" up -d --build
