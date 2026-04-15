@@ -12,7 +12,7 @@ else
   exit 1
 fi
 
-"${container_engine}" rm -f kafka kafka-ui-demo
+"${container_engine}" rm -f kafka kafka-ui
 
 "${container_engine}" network rm -f kafka-labs
 
