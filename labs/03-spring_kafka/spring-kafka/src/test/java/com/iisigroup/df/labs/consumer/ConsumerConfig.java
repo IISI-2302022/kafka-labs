@@ -33,33 +33,6 @@ public class ConsumerConfig {
         return errorHandler;
     }
 
-    // 單筆資料進行轉換
-    @Bean
-    public RecordInterceptor<?, ?> recordInterceptor() {
-        return (record, consumer) -> {
-            System.out.println("recordInterceptor");
-            return record;
-        };
-    }
-
-    // 整批資料進行轉換
-    @Bean
-    public BatchInterceptor<?, ?> batchInterceptor() {
-        return (records, consumer) -> {
-            System.out.println("batchInterceptor");
-            return records;
-        };
-    }
-
-    // 每筆資料是否要過濾掉
-    @Bean
-    public RecordFilterStrategy<?, ?> recordFilterStrategy() {
-        return consumerRecord -> {
-            System.out.println("recordFilterStrategy");
-            return false;
-        };
-    }
-
     // 整批或單筆資料錯誤處理
     @Bean
     public KafkaListenerErrorHandler myErrorHandler() {
